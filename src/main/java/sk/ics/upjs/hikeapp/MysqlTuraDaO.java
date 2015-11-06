@@ -8,9 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class MysqlTuraDaO implements TuraDaO {
-
+    
     private JdbcTemplate tmp;
-
+    
     public MysqlTuraDaO() {
         MysqlDataSource ds = new MysqlDataSource();
         ds.setURL("jdbc:mysql://localhost/hike");
@@ -19,9 +19,9 @@ public class MysqlTuraDaO implements TuraDaO {
         tmp = new JdbcTemplate();
         tmp.setDataSource(ds);
     }
-
+    
     public class TuraMapper implements RowMapper {
-
+        
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             Tura t = new Tura();
@@ -31,23 +31,24 @@ public class MysqlTuraDaO implements TuraDaO {
             t.setCasovaNarocnost(rs.getDouble("CasovaNarocnost"));
             t.setDlzka(rs.getDouble("Dlzka"));
             t.setHodnotenie(rs.getDouble("Hodnotenie"));
+            t.setMimoChodnika(rs.getBoolean("MimoChodnik"));
             return t;
         }
     }
-
+    
     @Override
     public void pridaj(Tura tura) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public List<Tura> dajVsetky() {
         return tmp.query("select * from tura", new TuraMapper());
     }
-
+    
     @Override
     public void vymaz(Tura tura) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

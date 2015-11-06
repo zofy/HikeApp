@@ -12,6 +12,16 @@ public class Tura {
 
     private String popis;
 
+    private boolean mimoChodnika;
+
+    public void setMimoChodnika(boolean mimoChodnika) {
+        this.mimoChodnika = mimoChodnika;
+    }
+
+    public boolean isMimoChodnika() {
+        return mimoChodnika;
+    }
+
     @Override
     public String toString() {
         return pohorie + " obtiaznost: " + obtiaznost + " dlzka: " + dlzka + " casovaNarocnost: "

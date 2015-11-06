@@ -71,8 +71,8 @@ public class MainForm extends javax.swing.JFrame {
             //JLabel label = new JLabel();
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
             label.setText("<HTML>" + tura.getPohorie() + "&emsp;&emsp;&emsp;" + tura.getCasovaNarocnost() + "&emsp;&emsp;&emsp;"
-                    + tura.getObtiaznost() + " <br> " + tura.getRocneObdobie() + "&emsp;&emsp;&emsp;" + tura.getDlzka()
-                    + "&emsp;&emsp;&emsp;" + tura.getHodnotenie() + "</HTML>");
+                    + tura.getObtiaznost() + " <br> " + tura.getRocneObdobie() + "&emsp;&emsp;&emsp;" + tura.getDlzka()+"&emsp;&emsp;&emsp;"+
+                    tura.isMimoChodnika()+ "&emsp;&emsp;&emsp;" + tura.getHodnotenie() + "</HTML>");
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
 
