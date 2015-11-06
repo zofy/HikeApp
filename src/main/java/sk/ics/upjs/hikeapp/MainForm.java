@@ -33,11 +33,11 @@ import javax.swing.border.Border;
  *
  * @author Patrik
  */
-public class MainForm extends javax.swing.JFrame{
+public class MainForm extends javax.swing.JFrame {
 
     private MysqlTuraDaO tury;
-    int mouseOver = -1;
-    
+    private int mouseOver = -1;
+
     public MainForm() {
         initComponents();
         tury = new MysqlTuraDaO();
@@ -47,7 +47,7 @@ public class MainForm extends javax.swing.JFrame{
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mouseOver = turyList.locationToIndex(new Point(e.getX(),e.getY()));
+                mouseOver = turyList.locationToIndex(new Point(e.getX(), e.getY()));
                 repaint();
             }
         });
@@ -58,25 +58,27 @@ public class MainForm extends javax.swing.JFrame{
                 mouseOver = -1;
                 repaint();
             }
-            
+
         });
     }
+
     final class MyListCellRend implements ListCellRenderer<Tura> {
 
         DefaultListCellRenderer dcr = new DefaultListCellRenderer();
-        
-        
+
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = new JLabel();
-            label.setText("<HTML>" + tura.getPohorie() + " <br> " + tura.getRocneObdobie() + "</HTML>");
+            //JLabel label = new JLabel();
+            JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
+            label.setText("<HTML>" + tura.getPohorie() + "&emsp;&emsp;&emsp;" + tura.getCasovaNarocnost() + "&emsp;&emsp;&emsp;"
+                    + tura.getObtiaznost() + " <br> " + tura.getRocneObdobie() + "&emsp;&emsp;&emsp;" + tura.getDlzka()
+                    + "&emsp;&emsp;&emsp;" + tura.getHodnotenie() + "</HTML>");
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
 
-            if (mouseOver != -1 && !isSelected) {
+            if (mouseOver == index && !isSelected) {
                 label.setForeground(Color.red);
-            }else{
-                label.setForeground(Color.yellow);
+                label.setBackground(Color.lightGray);
             }
             /* nefunguje bo netbeans je debilny
              ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logo.jpg"));
