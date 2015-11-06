@@ -9,6 +9,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -44,22 +47,27 @@ public class MainForm extends javax.swing.JFrame {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = new JLabel();
-            label.setText("<HTML>"+tura.getPohorie()+" <br> "+tura.getRocneObdobie()+"</HTML>");
+            final JLabel label = new JLabel();
+           
+            label.setText("<HTML>" + tura.getPohorie() + " <br> " + tura.getRocneObdobie() + "</HTML>");
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
-            if(isSelected){
-                label.setForeground(Color.red);
-                label.setBackground(Color.lightGray);
-                label.setOpaque(true);
-            }
-            if(label.isCursorSet()){
-                label.setBackground(Color.lightGray);
-                label.setOpaque(true);
-            }
-            //ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("Hiking/HikeApp/HikeApp/src/main/resources/logo.jpg"));
-            //Image img = icon.getImage();
-            //label.setIcon(new ImageIcon(img.getScaledInstance(40, 40, 0)));
+            
+            MouseAdapter adapter = new MouseAdapter() {
+
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    label.setBackground(Color.lightGray);
+                    label.setOpaque(true);
+                }
+            };
+              label.addMouseListener(adapter);
+              label.addMouseMotionListener(adapter);
+            /* nefunguje bo netbeans je debilny
+             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logo.jpg"));
+             Image img = icon.getImage();
+             label.setIcon(new ImageIcon(img.getScaledInstance(40, 40, 0)));
+             */            
             return label;
         }
 
@@ -79,11 +87,8 @@ public class MainForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        turyList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        turyList.setCellRenderer(new MyListCellRend());
+        turyList.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         turyScrollPane.setViewportView(turyList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
