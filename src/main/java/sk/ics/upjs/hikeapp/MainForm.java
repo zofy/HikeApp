@@ -9,8 +9,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
@@ -30,44 +33,56 @@ import javax.swing.border.Border;
  *
  * @author Patrik
  */
-public class MainForm extends javax.swing.JFrame {
+public class MainForm extends javax.swing.JFrame{
 
     private MysqlTuraDaO tury;
-
+    int mouseOver = -1;
+    
     public MainForm() {
         initComponents();
         tury = new MysqlTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
         turyList.setListData(tury.dajVsetky().toArray());
-    }
+        turyList.addMouseMotionListener(new MouseMotionAdapter() {
 
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseOver = turyList.locationToIndex(new Point(e.getX(),e.getY()));
+                repaint();
+            }
+        });
+        turyList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                mouseOver = -1;
+                repaint();
+            }
+            
+        });
+    }
     final class MyListCellRend implements ListCellRenderer<Tura> {
 
         DefaultListCellRenderer dcr = new DefaultListCellRenderer();
-
+        
+        
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
-            final JLabel label = new JLabel();
-           
+            JLabel label = new JLabel();
             label.setText("<HTML>" + tura.getPohorie() + " <br> " + tura.getRocneObdobie() + "</HTML>");
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
-            
-            MouseAdapter adapter = new MouseAdapter() {
 
-                @Override
-                public void mouseMoved(MouseEvent e) {
-                    label.setBackground(Color.lightGray);
-                    label.setOpaque(true);
-                }
-            };
-              label.addMouseListener(adapter);
-              label.addMouseMotionListener(adapter);
+            if (mouseOver != -1 && !isSelected) {
+                label.setForeground(Color.red);
+            }else{
+                label.setForeground(Color.yellow);
+            }
             /* nefunguje bo netbeans je debilny
              ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logo.jpg"));
              Image img = icon.getImage();
              label.setIcon(new ImageIcon(img.getScaledInstance(40, 40, 0)));
-             */            
+             */
             return label;
         }
 
