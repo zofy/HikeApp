@@ -9,4 +9,8 @@ public interface TuraDaO {
     public List<Tura> dajVsetky();
 
     public void vymaz(Tura tura);
+
+    public List<String> dajZoznamPohori();
+
+    public List<String> dajRocneObdobie();
 }
