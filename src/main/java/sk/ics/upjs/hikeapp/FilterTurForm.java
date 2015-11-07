@@ -5,9 +5,9 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 
 public class FilterTurForm extends javax.swing.JFrame {
-
+    
     private MysqlTuraDaO tury;
-
+    
     public FilterTurForm() {
         initComponents();
         //naplni PohorieComboBox
@@ -30,7 +30,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         }
         DefaultComboBoxModel modelRO = new DefaultComboBoxModel(zoznamROCB);
         rocneObdobieComboBox.setModel(modelRO);
-
+        
         pack();
         setVisible(true);
     }
@@ -59,6 +59,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         mimoChodnikLabel = new javax.swing.JLabel();
         mimoChodnikCheckBox = new javax.swing.JCheckBox();
         hodLabel = new javax.swing.JLabel();
+        hladajButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,7 +74,7 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         jLabel1.setText("Ročné obdobie");
 
-        rocneObdobieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        rocneObdobieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<RocneObdobie>" }));
         rocneObdobieComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rocneObdobieComboBoxActionPerformed(evt);
@@ -102,6 +103,13 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         hodLabel.setText("hod.");
 
+        hladajButton.setText("Hľadaj");
+        hladajButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hladajButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -113,35 +121,37 @@ public class FilterTurForm extends javax.swing.JFrame {
                     .addComponent(obtiaznostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(casovaNarLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(mimoChodnikLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(pohorieComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rocneObdobieComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(mimoChodnikCheckBox)
-                        .addGap(150, 150, 150))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(pohorieComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(rocneObdobieComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(32, 32, 32))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(casovaNarTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(hodLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(obtiaznostRadioButton1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(obtiaznostRadioButton2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(obtiaznostRadioButton3)))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(obtiaznostRadioButton4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(obtiaznostRadioButton5)
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(mimoChodnikCheckBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(hladajButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(casovaNarTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(hodLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(obtiaznostRadioButton1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(obtiaznostRadioButton2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(obtiaznostRadioButton3)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(obtiaznostRadioButton4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(obtiaznostRadioButton5)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,7 +180,8 @@ public class FilterTurForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mimoChodnikLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(mimoChodnikCheckBox)))
+                    .addComponent(mimoChodnikCheckBox)
+                    .addComponent(hladajButton)))
         );
 
         pack();
@@ -183,6 +194,14 @@ public class FilterTurForm extends javax.swing.JFrame {
     private void rocneObdobieComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rocneObdobieComboBoxActionPerformed
         rocneObdobieComboBox.repaint();
     }//GEN-LAST:event_rocneObdobieComboBoxActionPerformed
+
+    private void hladajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hladajButtonActionPerformed
+        this.setVisible(false);
+        List<Tura> zoznamTur = tury.dajVybraneTury(String.valueOf(pohorieComboBox.getSelectedItem()));
+        new MainForm(zoznamTur).setVisible(true);
+        //this.dispose();
+
+    }//GEN-LAST:event_hladajButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,6 +241,7 @@ public class FilterTurForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel casovaNarLabel;
     private javax.swing.JTextField casovaNarTextField;
+    private javax.swing.JButton hladajButton;
     private javax.swing.JLabel hodLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox mimoChodnikCheckBox;

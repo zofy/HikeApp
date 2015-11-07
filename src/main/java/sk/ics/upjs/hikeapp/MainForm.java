@@ -17,6 +17,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -36,14 +37,17 @@ import javax.swing.border.Border;
  */
 public class MainForm extends javax.swing.JFrame {
 
-    private MysqlTuraDaO tury;
+    private MysqlTuraDaO tury = new MysqlTuraDaO();
     private int mouseOver = -1;
 
     public MainForm() {
         initComponents();
-        tury = new MysqlTuraDaO();
+    }
+
+    public MainForm(List<Tura> zoznamTur) {
+        initComponents();
         turyList.setCellRenderer(new MyListCellRend());
-        turyList.setListData(tury.dajVsetky().toArray());
+        turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
         this.pack();
         this.setVisible(true);

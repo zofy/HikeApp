@@ -31,6 +31,11 @@ public class MysqlTuraDaO implements TuraDaO {
         return tmp.query("Select distinct rocneObdobie from tura", new ROMapper());
     }
 
+    @Override
+    public List<Tura> dajVybraneTury(String pohorie) {
+        return tmp.query("select * from tura where pohorie=?", new Object[]{pohorie}, new TuraMapper());
+    }
+
     public class PohorieMapper implements RowMapper {
 
         @Override

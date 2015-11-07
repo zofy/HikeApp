@@ -8,6 +8,8 @@ public interface TuraDaO {
 
     public List<Tura> dajVsetky();
 
+    public List<Tura> dajVybraneTury(String pohorie);
+
     public void vymaz(Tura tura);
 
     public List<String> dajZoznamPohori();
