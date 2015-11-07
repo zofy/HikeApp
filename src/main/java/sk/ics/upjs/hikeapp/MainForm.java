@@ -44,6 +44,9 @@ public class MainForm extends javax.swing.JFrame {
         tury = new MysqlTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
         turyList.setListData(tury.dajVsetky().toArray());
+        turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
+        this.pack();
+        this.setVisible(true);
         turyList.addMouseMotionListener(new MouseMotionAdapter() {
 
             @Override
@@ -73,11 +76,12 @@ public class MainForm extends javax.swing.JFrame {
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
             //format textu v JLabel
             String html = "<html><table>\n"
-                    + "<tr><td align='right'>%s</td><td align='left'>%s hod.</td><td align='left'>%s km</td></tr>\n"
-                    + "<tr><td align='right'>%s</td><td></td><td align='center'>%s</td></tr>\n"
+                    + "<tr><td align='right'>%s</td><td>  </td><td align='left'>%s hod.</td><td align='left'>%s km</td><td align='left'>level: %s</td></tr>\n"
+                    + "<tr><td align='right'>%s</td><td>  </td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
                     + "</table></html>";
             label.setText(String.format(html, tura.getPohorie(),
-                    tura.getCasovaNarocnost(), tura.getDlzka(), tura.getRocneObdobie(), tura.getHodnotenie()));
+                    tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
+                    tura.getHodnotenie(), tura.isMimoChodnika()));
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
 
