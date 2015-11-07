@@ -27,6 +27,7 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 /**
@@ -68,11 +69,15 @@ public class MainForm extends javax.swing.JFrame {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
-            //JLabel label = new JLabel();
+            //delegat
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
-            label.setText("<HTML>" + tura.getPohorie() + "&emsp;&emsp;&emsp;" + tura.getCasovaNarocnost() + "&emsp;&emsp;&emsp;"
-                    + tura.getObtiaznost() + " <br> " + tura.getRocneObdobie() + "&emsp;&emsp;&emsp;" + tura.getDlzka()+"&emsp;&emsp;&emsp;"+
-                    tura.isMimoChodnika()+ "&emsp;&emsp;&emsp;" + tura.getHodnotenie() + "</HTML>");
+            //format textu v JLabel
+            String html = "<html><table>\n"
+                    + "<tr><td align='right'>%s</td><td align='left'>%s hod.</td><td align='left'>%s km</td></tr>\n"
+                    + "<tr><td align='right'>%s</td><td></td><td align='center'>%s</td></tr>\n"
+                    + "</table></html>";
+            label.setText(String.format(html, tura.getPohorie(),
+                    tura.getCasovaNarocnost(), tura.getDlzka(), tura.getRocneObdobie(), tura.getHodnotenie()));
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
 
