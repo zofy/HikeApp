@@ -1,8 +1,11 @@
 package sk.ics.upjs.hikeapp;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 
 public class FilterTurForm extends javax.swing.JFrame {
@@ -45,6 +48,7 @@ public class FilterTurForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        obtiaznostGroupButton = new javax.swing.ButtonGroup();
         pohorieLabel = new javax.swing.JLabel();
         pohorieComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -66,6 +70,7 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         pohorieLabel.setText("Pohorie");
 
+        pohorieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<Pohorie>" }));
         pohorieComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pohorieComboBoxActionPerformed(evt);
@@ -74,6 +79,7 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         jLabel1.setText("Ročné obdobie");
 
+        rocneObdobieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<Ročné Obdobie>" }));
         rocneObdobieComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rocneObdobieComboBoxActionPerformed(evt);
@@ -82,15 +88,35 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         obtiaznostLabel.setText("Max. obtiažnosť");
 
+        obtiaznostGroupButton.add(obtiaznostRadioButton1);
         obtiaznostRadioButton1.setText("1");
+        obtiaznostRadioButton1.setToolTipText("");
 
+        obtiaznostGroupButton.add(obtiaznostRadioButton2);
         obtiaznostRadioButton2.setText("2");
+        obtiaznostRadioButton2.setToolTipText("");
+        obtiaznostRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                obtiaznostRadioButton2ActionPerformed(evt);
+            }
+        });
 
+        obtiaznostGroupButton.add(obtiaznostRadioButton3);
         obtiaznostRadioButton3.setText("3");
+        obtiaznostRadioButton3.setToolTipText("");
 
+        obtiaznostGroupButton.add(obtiaznostRadioButton4);
         obtiaznostRadioButton4.setText("4");
+        obtiaznostRadioButton4.setToolTipText("");
 
+        obtiaznostGroupButton.add(obtiaznostRadioButton5);
         obtiaznostRadioButton5.setText("5");
+        obtiaznostRadioButton5.setToolTipText("");
+        obtiaznostRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                obtiaznostRadioButton5ActionPerformed(evt);
+            }
+        });
 
         casovaNarLabel.setText("Max. trvanie túry");
 
@@ -141,7 +167,7 @@ public class FilterTurForm extends javax.swing.JFrame {
                                         .addComponent(hodLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(obtiaznostRadioButton1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(obtiaznostRadioButton2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(obtiaznostRadioButton3)))
@@ -193,6 +219,18 @@ public class FilterTurForm extends javax.swing.JFrame {
         rocneObdobieComboBox.repaint();
     }//GEN-LAST:event_rocneObdobieComboBoxActionPerformed
 
+    // metoda ktora prejde vsetky buttony v ButtonGroup 
+    public String getSelectedValue(ButtonGroup bg) {
+        int i = 1;
+        for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return String.valueOf(i);
+            }
+            i++;
+        }
+        return null;
+    }
     private void hladajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hladajButtonActionPerformed
         this.setVisible(false);
         Stack<String> nazvyAtributov = new Stack<String>();
@@ -204,6 +242,10 @@ public class FilterTurForm extends javax.swing.JFrame {
         if (!String.valueOf(rocneObdobieComboBox.getSelectedItem()).equals("<RocneObdobie>")) {
             nazvyAtributov.push("RocneObdobie");
             hodnotyAtributov.push(String.valueOf(rocneObdobieComboBox.getSelectedItem()));
+        }
+        if (!getSelectedValue(obtiaznostGroupButton).equals("null")) {
+            nazvyAtributov.push("obtiaznost");
+            hodnotyAtributov.push(getSelectedValue(obtiaznostGroupButton));
         }
         if (!String.valueOf(casovaNarTextField.getText()).equals("")) {
             nazvyAtributov.push("casovaNarocnost");
@@ -217,6 +259,14 @@ public class FilterTurForm extends javax.swing.JFrame {
         //this.dispose();
 
     }//GEN-LAST:event_hladajButtonActionPerformed
+
+    private void obtiaznostRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_obtiaznostRadioButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_obtiaznostRadioButton2ActionPerformed
+
+    private void obtiaznostRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_obtiaznostRadioButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_obtiaznostRadioButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,6 +311,7 @@ public class FilterTurForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox mimoChodnikCheckBox;
     private javax.swing.JLabel mimoChodnikLabel;
+    private javax.swing.ButtonGroup obtiaznostGroupButton;
     private javax.swing.JLabel obtiaznostLabel;
     private javax.swing.JRadioButton obtiaznostRadioButton1;
     private javax.swing.JRadioButton obtiaznostRadioButton2;

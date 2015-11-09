@@ -40,7 +40,7 @@ public class MysqlTuraDaO implements TuraDaO {
         if (!zoznamAtributov.isEmpty()) {
             buff.append(" where ");
             while (!zoznamAtributov.isEmpty()) {
-                if (zoznamAtributov.peek().equals("casovaNarocnost") || zoznamAtributov.peek().equals("Obtiaznost")) {
+                if (zoznamAtributov.peek().equals("casovaNarocnost") || zoznamAtributov.peek().equals("obtiaznost")) {
                     buff.append(zoznamAtributov.pop() + "<=? and ");
                 } else {
                     buff.append(zoznamAtributov.pop() + "=? and ");
