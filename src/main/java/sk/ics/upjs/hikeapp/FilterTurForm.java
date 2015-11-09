@@ -1,13 +1,14 @@
 package sk.ics.upjs.hikeapp;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 
 public class FilterTurForm extends javax.swing.JFrame {
-    
+
     private MysqlTuraDaO tury;
-    
+
     public FilterTurForm() {
         initComponents();
         //naplni PohorieComboBox
@@ -30,7 +31,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         }
         DefaultComboBoxModel modelRO = new DefaultComboBoxModel(zoznamROCB);
         rocneObdobieComboBox.setModel(modelRO);
-        
+
         pack();
         setVisible(true);
     }
@@ -65,7 +66,6 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         pohorieLabel.setText("Pohorie");
 
-        pohorieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<Pohorie>" }));
         pohorieComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pohorieComboBoxActionPerformed(evt);
@@ -74,7 +74,6 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         jLabel1.setText("Ročné obdobie");
 
-        rocneObdobieComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<RocneObdobie>" }));
         rocneObdobieComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rocneObdobieComboBoxActionPerformed(evt);
@@ -95,10 +94,9 @@ public class FilterTurForm extends javax.swing.JFrame {
 
         casovaNarLabel.setText("Max. trvanie túry");
 
-        casovaNarTextField.setText("8");
-
         mimoChodnikLabel.setText("Off track");
 
+        mimoChodnikCheckBox.setSelected(true);
         mimoChodnikCheckBox.setText("áno");
 
         hodLabel.setText("hod.");
@@ -197,8 +195,25 @@ public class FilterTurForm extends javax.swing.JFrame {
 
     private void hladajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hladajButtonActionPerformed
         this.setVisible(false);
-        List<Tura> zoznamTur = tury.dajVybraneTury(String.valueOf(pohorieComboBox.getSelectedItem()));
-        new MainForm(zoznamTur).setVisible(true);
+        Stack<String> nazvyAtributov = new Stack<String>();
+        Stack<String> hodnotyAtributov = new Stack<String>();
+        if (!String.valueOf(pohorieComboBox.getSelectedItem()).equals("<Pohorie>")) {
+            nazvyAtributov.push("Pohorie");
+            hodnotyAtributov.push(String.valueOf(pohorieComboBox.getSelectedItem()));
+        }
+        if (!String.valueOf(rocneObdobieComboBox.getSelectedItem()).equals("<RocneObdobie>")) {
+            nazvyAtributov.push("RocneObdobie");
+            hodnotyAtributov.push(String.valueOf(rocneObdobieComboBox.getSelectedItem()));
+        }
+        if (!String.valueOf(casovaNarTextField.getText()).equals("")) {
+            nazvyAtributov.push("casovaNarocnost");
+            hodnotyAtributov.push(String.valueOf(casovaNarTextField.getText()));
+        }
+        if (!mimoChodnikCheckBox.isSelected()) {
+            nazvyAtributov.push("mimoChodnik");
+            hodnotyAtributov.push("false");
+        }
+        new MainForm(tury.dajVybraneTury(nazvyAtributov, hodnotyAtributov)).setVisible(true);
         //this.dispose();
 
     }//GEN-LAST:event_hladajButtonActionPerformed

@@ -1,6 +1,7 @@
 package sk.ics.upjs.hikeapp;
 
 import java.util.List;
+import java.util.Stack;
 
 public interface TuraDaO {
 
@@ -8,7 +9,7 @@ public interface TuraDaO {
 
     public List<Tura> dajVsetky();
 
-    public List<Tura> dajVybraneTury(String pohorie);
+    public List<Tura> dajVybraneTury(Stack<String> nazvyAtributov, Stack<String> hodnotyAtributov);
 
     public void vymaz(Tura tura);
 

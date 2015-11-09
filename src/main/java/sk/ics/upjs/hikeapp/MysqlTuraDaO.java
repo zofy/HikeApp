@@ -4,6 +4,8 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,9 +33,34 @@ public class MysqlTuraDaO implements TuraDaO {
         return tmp.query("Select distinct rocneObdobie from tura", new ROMapper());
     }
 
+    // zatial je metoda tu: na spracovanie vyberu tur
+    public String spracujVyberTur(Stack<String> zoznamAtributov) {
+        StringBuilder buff = new StringBuilder();
+        buff.append("select * from tura");
+        if (!zoznamAtributov.isEmpty()) {
+            buff.append(" where ");
+            while (!zoznamAtributov.isEmpty()) {
+                if (zoznamAtributov.peek().equals("casovaNarocnost") || zoznamAtributov.peek().equals("Obtiaznost")) {
+                    buff.append(zoznamAtributov.pop() + "<=? and ");
+                } else {
+                    buff.append(zoznamAtributov.pop() + "=? and ");
+                }
+            }
+            buff.delete(buff.length() - 4, buff.length());
+        }
+        return buff.toString();
+    }
+
     @Override
-    public List<Tura> dajVybraneTury(String pohorie) {
-        return tmp.query("select * from tura where pohorie=?", new Object[]{pohorie}, new TuraMapper());
+    public List<Tura> dajVybraneTury(Stack<String> nazvyAtributov, Stack<String> hodnotyAtributov) {
+        Object[] hodnoty = new Object[hodnotyAtributov.size()];
+        int i = 0;
+        while (!hodnotyAtributov.isEmpty()) {
+            hodnoty[i] = hodnotyAtributov.pop();
+            i++;
+        }
+        String sql = spracujVyberTur(nazvyAtributov);
+        return tmp.query(sql, hodnoty, new TuraMapper());
     }
 
     public class PohorieMapper implements RowMapper {
