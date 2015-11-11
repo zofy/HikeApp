@@ -10,7 +10,7 @@ import javax.swing.DefaultComboBoxModel;
 
 public class FilterTurForm extends javax.swing.JFrame {
 
-    private MysqlTuraDaO tury;
+    private TuraDaO tury;
     private MyButtonGroup obtiaznostButtonGroup;
 
     public FilterTurForm() {
@@ -24,7 +24,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         obtiaznostButtonGroup.add(obtiaznostRadioButton5);
 
         //naplni PohorieComboBox
-        tury = new MysqlTuraDaO();
+        tury = TuraDaOFactory.INSTANCE.getTuraDaO();
         List<String> zoznam = tury.dajZoznamPohori();
         Vector zoznamCB = new Vector();
         zoznamCB.add("<Pohorie>");
@@ -232,7 +232,7 @@ public class FilterTurForm extends javax.swing.JFrame {
             return null;
         }
     }
-    
+
     private void hladajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hladajButtonActionPerformed
         this.setVisible(false);
         Stack<String> nazvyAtributov = new Stack<String>();

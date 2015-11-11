@@ -80,8 +80,9 @@ public class MainForm extends javax.swing.JFrame {
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
             //format textu v JLabel
             String html = "<html><table>\n"
-                    + "<tr><td align='right'>%s</td><td>  </td><td align='left'>%s hod.</td><td align='left'>%s km</td><td align='left'>level: %s</td></tr>\n"
-                    + "<tr><td align='right'>%s</td><td>  </td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
+                    +"<col width='150'> <col width='150'> <col width='1000'> <col width='150'>"
+                    + "<tr><td align='right'>%s</td><td align='left'>%s hod.</td><td align='left'>%s km</td><td align='left'>level: %s</td></tr>\n"
+                    + "<tr><td align='right'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
                     + "</table></html>";
             label.setText(String.format(html, tura.getPohorie(),
                     tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
