@@ -18,6 +18,8 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -30,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -49,8 +52,8 @@ public class MainForm extends javax.swing.JFrame {
         turyList.setCellRenderer(new MyListCellRend());
         turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
-        this.pack();
-        this.setVisible(true);
+        //this.pack();
+        //this.setVisible(true);
         turyList.addMouseMotionListener(new MouseMotionAdapter() {
 
             @Override
@@ -78,21 +81,34 @@ public class MainForm extends javax.swing.JFrame {
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
             //delegat
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
+
             //format textu v JLabel
             String html = "<html><table>\n"
-                    +"<col width='150'> <col width='150'> <col width='1000'> <col width='150'>"
-                    + "<tr><td align='right'>%s</td><td align='left'>%s hod.</td><td align='left'>%s km</td><td align='left'>level: %s</td></tr>\n"
-                    + "<tr><td align='right'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
+                    + "<tr><td style=width:80px align='left'>%s</td><td align='left'>%s hod.</td><td style=width:75px align='left'>%s km</td><td valign='middle'>level: %s</td></tr>\n"
+                    + "<tr><td align='center'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
                     + "</table></html>";
             label.setText(String.format(html, tura.getPohorie(),
                     tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
                     tura.getHodnotenie(), tura.isMimoChodnika()));
+            /*label.setText(String.format(html, tura.getPohorie(),
+             tura.getCasovaNarocnost()
+             , tura.getDlzka()
+             , tura.getObtiaznost()
+             ));*/
             Border border = BorderFactory.createLineBorder(Color.BLACK);
             label.setBorder(border);
-
+            // nacitavanie obrazka to znacne spomaluje
+            /*Image img = null;
+            try {
+            img = ImageIO.read(new File("C:\\logo.jpg"));
+            } catch (IOException ex) {
+            System.err.println("Neni obrazok!");
+            }*/
+            //Image imgScaled = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            //label.setIcon(new ImageIcon(imgScaled));
             if (mouseOver == index && !isSelected) {
                 label.setForeground(Color.red);
-                label.setBackground(Color.lightGray);
+                label.setBackground(Color.LIGHT_GRAY);
             }
             /* nefunguje bo netbeans je debilny
              ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logo.jpg"));
