@@ -7,30 +7,19 @@ package sk.ics.upjs.hikeapp;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -81,40 +70,34 @@ public class MainForm extends javax.swing.JFrame {
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
             //delegat
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
+            // zatial ako JButton lebo to lepsie vyzera
+            //JButton label = new JButton();
 
             //format textu v JLabel
             String html = "<html><table>\n"
-                    + "<tr><td style=width:80px align='left'>%s</td><td align='left'>%s hod.</td><td style=width:75px align='left'>%s km</td><td valign='middle'>level: %s</td></tr>\n"
-                    + "<tr><td align='center'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: %s</td></tr>\n"
+                    + "<tr>"
+                    + "<td rowspan='2'><img src=%s></td>"
+                    + "<td style=width:80px align='left'>%s</td><td align='left'>%s hod.</td><td style=width:75px align='left'>%s km</td><td align='center'>level: %s</td>"
+                    + "</tr>\n"
+                    + "<tr><td align='center'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: <img src=%s></td></tr>\n"
                     + "</table></html>";
-            label.setText(String.format(html, tura.getPohorie(),
+            String mimoChodnik;
+            if (tura.isMimoChodnika()) {
+                mimoChodnik = "file:C:\\yes.png";
+            } else {
+                mimoChodnik = "file:C:\\no.png";
+            }
+            String levelLogo="file:C:\\logo.jpg";
+            label.setText(String.format(html,levelLogo, tura.getPohorie(),
                     tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
-                    tura.getHodnotenie(), tura.isMimoChodnika()));
-            /*label.setText(String.format(html, tura.getPohorie(),
-             tura.getCasovaNarocnost()
-             , tura.getDlzka()
-             , tura.getObtiaznost()
-             ));*/
-            Border border = BorderFactory.createLineBorder(Color.BLACK);
-            label.setBorder(border);
-            // nacitavanie obrazka to znacne spomaluje
-            /*Image img = null;
-            try {
-            img = ImageIO.read(new File("C:\\logo.jpg"));
-            } catch (IOException ex) {
-            System.err.println("Neni obrazok!");
-            }*/
-            //Image imgScaled = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-            //label.setIcon(new ImageIcon(imgScaled));
+                    tura.getHodnotenie(), mimoChodnik));
+            /*Border border = BorderFactory.createLineBorder(Color.BLACK);
+            label.setBorder(border);*/
             if (mouseOver == index && !isSelected) {
                 label.setForeground(Color.red);
-                label.setBackground(Color.LIGHT_GRAY);
+                label.setBackground(new Color(175, 238, 238));
             }
-            /* nefunguje bo netbeans je debilny
-             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logo.jpg"));
-             Image img = icon.getImage();
-             label.setIcon(new ImageIcon(img.getScaledInstance(40, 40, 0)));
-             */
+
             return label;
         }
 
