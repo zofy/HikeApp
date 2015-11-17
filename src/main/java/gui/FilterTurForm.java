@@ -1,5 +1,6 @@
-package sk.ics.upjs.hikeapp;
+package gui;
 
+import gui.MainForm;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
@@ -7,6 +8,8 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import sk.ics.upjs.hikeapp.TuraDaO;
+import sk.ics.upjs.hikeapp.TuraDaOFactory;
 
 public class FilterTurForm extends javax.swing.JFrame {
 
@@ -15,6 +18,7 @@ public class FilterTurForm extends javax.swing.JFrame {
 
     public FilterTurForm() {
         initComponents();
+        this.setTitle("Výber túry");
         // mame vlastny ButtonGroup , kt ma funkciu ze vrati ktory radioButton je zvoleny
         obtiaznostButtonGroup = new MyButtonGroup();
         obtiaznostButtonGroup.add(obtiaznostRadioButton1);

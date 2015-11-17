@@ -1,4 +1,4 @@
-package sk.ics.upjs.hikeapp;
+package gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -10,11 +10,18 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import sk.ics.upjs.hikeapp.UzivatelMysqlDaO;
 
 public class LogInForm extends javax.swing.JFrame {
     
+    private UzivatelMysqlDaO uzivatelia;
+    private JFrame frame = this;
+    
     public LogInForm() {
         initComponents();
+        this.setTitle("Hike app");
+        uzivatelia = new UzivatelMysqlDaO();
         BufferedImage logInObrazok = null;
         try {
             logInObrazok = ImageIO.read(new File("C:\\loginLogo.jpg"));
@@ -26,8 +33,11 @@ public class LogInForm extends javax.swing.JFrame {
         loginObrazokLabel.setIcon(new ImageIcon(scaledObrazok));
         this.getContentPane().setBackground(Color.white);
         String hostText = "<html><h align='center'><u>Pokračuj ako hosť</u></h></html>";
+        String registrujText = "<html><h align='center'><u>Registruj</u></h></html>";
+        registrujLabel.setText(registrujText);
         hostLabel.setText(hostText);
-        final Color farba = hostLabel.getForeground();
+        final Color farbaReg = registrujLabel.getForeground();
+        final Color farbaHosta = hostLabel.getForeground();
         hostLabel.addMouseMotionListener(new MouseAdapter() {
             
             @Override
@@ -40,16 +50,39 @@ public class LogInForm extends javax.swing.JFrame {
             
             @Override
             public void mouseExited(MouseEvent e) {
-                hostLabel.setForeground(farba);
+                hostLabel.setForeground(farbaHosta);
             }
             
             @Override
             public void mouseClicked(MouseEvent e) {
-                // otvorit napr vyhladavanie alebo nove okno pre hosta
-                System.out.println("mamamia");
+                frame.dispose();
+                new FilterTurForm().setVisible(true);
+            }
+        });
+        registrujLabel.addMouseMotionListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                registrujLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                registrujLabel.setForeground(Color.blue);
+            }
+        });
+        registrujLabel.addMouseListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                registrujLabel.setForeground(farbaReg);
+            }
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //frame.setVisible(false);
+                frame.dispose();
+                new RegisterForm().setVisible(true);
             }
             
         });
+        pack();
     }
     
     @SuppressWarnings("unchecked")
@@ -63,6 +96,7 @@ public class LogInForm extends javax.swing.JFrame {
         menoLabel = new javax.swing.JLabel();
         hesloLabel = new javax.swing.JLabel();
         hostLabel = new javax.swing.JLabel();
+        registrujLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,6 +118,8 @@ public class LogInForm extends javax.swing.JFrame {
         hostLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         hostLabel.setText("Hosť");
 
+        registrujLabel.setText("Registruj");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -91,25 +127,29 @@ public class LogInForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(loginObrazokLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(106, 106, 106)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(hesloLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(hesloTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()
+                                .addComponent(loginObrazokLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(menoLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(menoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(hostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(127, 127, 127))
+                                .addGap(106, 106, 106)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(hesloLabel)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(hesloTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(menoLabel)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(menoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(hostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)
+                        .addComponent(registrujLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,7 +166,9 @@ public class LogInForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logInButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hostLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hostLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(registrujLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -180,5 +222,6 @@ public class LogInForm extends javax.swing.JFrame {
     private javax.swing.JLabel loginObrazokLabel;
     private javax.swing.JLabel menoLabel;
     private javax.swing.JTextField menoTextField;
+    private javax.swing.JLabel registrujLabel;
     // End of variables declaration//GEN-END:variables
 }

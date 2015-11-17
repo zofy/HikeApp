@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package sk.ics.upjs.hikeapp;
+package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,17 +15,17 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import sk.ics.upjs.hikeapp.Tura;
+import sk.ics.upjs.hikeapp.TuraDaO;
+import sk.ics.upjs.hikeapp.TuraDaOFactory;
 
-/**
- *
- * @author Patrik
- */
 public class MainForm extends javax.swing.JFrame {
 
-    private MysqlTuraDaO tury = new MysqlTuraDaO();
+    private TuraDaO tury;
     private int mouseOver = -1;
 
     public MainForm() {
@@ -38,6 +34,8 @@ public class MainForm extends javax.swing.JFrame {
 
     public MainForm(List<Tura> zoznamTur) {
         initComponents();
+        this.setTitle("Hike");
+        tury = TuraDaOFactory.INSTANCE.getTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
         turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
@@ -60,6 +58,7 @@ public class MainForm extends javax.swing.JFrame {
             }
 
         });
+        pack();
     }
 
     final class MyListCellRend implements ListCellRenderer<Tura> {
@@ -72,6 +71,7 @@ public class MainForm extends javax.swing.JFrame {
             JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
             // zatial ako JButton lebo to lepsie vyzera
             //JButton label = new JButton();
+            // Nastavit na labeli GridLayout a potom vlozit text aj star rating
 
             //format textu v JLabel
             String html = "<html><table>\n"
@@ -87,17 +87,16 @@ public class MainForm extends javax.swing.JFrame {
             } else {
                 mimoChodnik = "file:C:\\no.png";
             }
-            String levelLogo="file:C:\\logo.jpg";
-            label.setText(String.format(html,levelLogo, tura.getPohorie(),
+            String levelLogo = "file:C:\\logo.jpg";
+            label.setText(String.format(html, levelLogo, tura.getPohorie(),
                     tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
                     tura.getHodnotenie(), mimoChodnik));
             /*Border border = BorderFactory.createLineBorder(Color.BLACK);
-            label.setBorder(border);*/
+             label.setBorder(border);*/
             if (mouseOver == index && !isSelected) {
                 label.setForeground(Color.red);
                 label.setBackground(new Color(175, 238, 238));
             }
-
             return label;
         }
 
