@@ -2,8 +2,10 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -59,6 +61,10 @@ public class MainForm extends javax.swing.JFrame {
 
         });
         pack();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int height = dim.height;
+        int width = dim.width;
+        this.setLocation((-this.getSize().width + width) / 2, (-this.getSize().height + height) / 2);
     }
 
     final class MyListCellRend implements ListCellRenderer<Tura> {

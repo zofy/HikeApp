@@ -1,6 +1,9 @@
 package gui;
 
 import gui.MainForm;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
@@ -49,6 +52,10 @@ public class FilterTurForm extends javax.swing.JFrame {
         rocneObdobieComboBox.setModel(modelRO);
 
         pack();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int height = dim.height;
+        int width = dim.width;
+        this.setLocation((-this.getSize().width + width) / 2, (-this.getSize().height + height) / 2);
         setVisible(true);
     }
 
