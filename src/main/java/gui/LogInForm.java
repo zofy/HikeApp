@@ -73,7 +73,7 @@ public class LogInForm extends javax.swing.JFrame {
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
         //this.setLocationRelativeTo(null);
     }
-
+// comment
     public class LoginPane extends JPanel {
 
         public LoginPane() {
