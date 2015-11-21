@@ -2,7 +2,6 @@ package gui;
 
 import gui.MainForm;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.util.Enumeration;
 import java.util.List;

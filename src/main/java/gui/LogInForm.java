@@ -84,7 +84,7 @@ public class LogInForm extends javax.swing.JFrame {
 
             BufferedImage logInObrazok = null;
             try {
-                logInObrazok = ImageIO.read(new File("C:\\loginLogo.jpg"));
+                logInObrazok = ImageIO.read(new File("C:\\logo\\loginLogo.jpg"));
             } catch (IOException ex) {
                 System.err.println("Neni obrazok!");
             }

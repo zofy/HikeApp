@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -23,19 +25,16 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import org.jdesktop.swingx.JXTable;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.TuraDaOFactory;
@@ -48,6 +47,7 @@ public class MainForm extends javax.swing.JFrame {
     private ImageIcon img2;
     private ImageIcon img3;
     private int level;
+    private String offTrack;
 
     public MainForm() {
         initComponents();
@@ -56,8 +56,24 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm(List<Tura> zoznamTur) {
         initComponents();
         this.setTitle("Hike");
+        this.setMinimumSize(new Dimension(500, 250));
+        this.setPreferredSize(new Dimension(500, 250));
+        this.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension sz = e.getComponent().getSize();
+                if (sz.width != 500) {
+                    e.getComponent().setSize(500, sz.height);
+                    repaint();
+                }
+            }
+
+        });
+        //this.setResizable(false);
         tury = TuraDaOFactory.INSTANCE.getTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
+        turyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
         //this.pack();
@@ -94,6 +110,7 @@ public class MainForm extends javax.swing.JFrame {
             logInObrazok1 = ImageIO.read(new File("C:\\logo\\lvl1.png"));
             logInObrazok2 = ImageIO.read(new File("C:\\logo\\lvl2.png"));
             logInObrazok3 = ImageIO.read(new File("C:\\logo\\lvl3.png"));
+
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
@@ -116,7 +133,9 @@ public class MainForm extends javax.swing.JFrame {
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
             JPanel label = new JPanel(new GridBagLayout());
+            label.setPreferredSize(new Dimension(450, 70));
             label.setBackground(Color.white);
+            label.setBorder(BorderFactory.createLineBorder(Color.black));
             label.setLayout(new GridBagLayout());
             // nacitanie obrazku do labelu
             JLabel l = null;
@@ -132,67 +151,87 @@ public class MainForm extends javax.swing.JFrame {
             }
             GridBagConstraints gbc = new GridBagConstraints();
 
-            gbc.insets = new Insets(2, 2, 2, 2);
+            gbc.insets = new Insets(3, 3, 3, 3);
             gbc.gridx = 0;
             gbc.gridy = 0;
             //gbc.ipadx = 50;
             //gbc.ipady = 50;
             gbc.gridheight = 2;
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            gbc.anchor = GridBagConstraints.CENTER;
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
 
-            gbc.ipadx = 0;
-            gbc.ipady = 0;
             gbc.gridwidth = 1;
             gbc.gridheight = 1;
+            //gbc.anchor = GridBagConstraints.CENTER;
 
             gbc.gridx = 1;
             gbc.gridy = 0;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.ipady = 10;
+            //gbc.fill = GridBagConstraints.HORIZONTAL;
+            //gbc.ipady = 5;
             l = new JLabel(tura.getPohorie());
+            l.setMinimumSize(new Dimension(100, 30));
+            l.setPreferredSize(new Dimension(100, 30));
             l.setHorizontalAlignment(SwingConstants.RIGHT);
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
             gbc.gridy++;
             l = new JLabel(tura.getRocneObdobie());
+            l.setMinimumSize(new Dimension(100, 30));
+            l.setPreferredSize(new Dimension(100, 30));
             l.setHorizontalAlignment(SwingConstants.RIGHT);
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
-            // vynulovat
-            gbc.ipadx = 0;
 
             gbc.gridx = 2;
             gbc.gridy = 0;
-            //gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(3, 5, 3, 3);
             l = new JLabel(tura.getCiel());
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setMinimumSize(new Dimension(100, 30));
+            l.setPreferredSize(new Dimension(100, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
             gbc.gridy++;
             l = new JLabel("hodnotenie: " + String.valueOf(tura.getHodnotenie()));
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setMinimumSize(new Dimension(100, 30));
+            l.setPreferredSize(new Dimension(100, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
 
             gbc.gridx = 3;
             gbc.gridy = 0;
+            gbc.insets = new Insets(3, 3, 3, 3);
             //gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1;
+            //gbc.weightx = 0.1;
             l = new JLabel(String.valueOf(tura.getCasovaNarocnost()) + " hod.");
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setMinimumSize(new Dimension(70, 30));
+            l.setPreferredSize(new Dimension(70, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
             gbc.gridy++;
             l = new JLabel(String.valueOf(tura.getDlzka()) + " km");
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setMinimumSize(new Dimension(70, 30));
+            l.setPreferredSize(new Dimension(70, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
 
             gbc.gridx = 4;
             gbc.gridy = 0;
             l = new JLabel("level: " + String.valueOf(tura.getObtiaznost()));
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            l.setMinimumSize(new Dimension(70, 30));
+            l.setPreferredSize(new Dimension(70, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
             gbc.gridy++;
-            l = new JLabel("off track: " + String.valueOf(tura.isMimoChodnika()));
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
+            if (tura.isMimoChodnika()) {
+                offTrack = "<html>off track: <img src='file:C:\\logo\\yes.png'></html>";
+            } else {
+                offTrack = "<html>off track: <img src='file:C:\\logo\\no.png'></html>";
+            }
+            l = new JLabel(offTrack);
+            l.setMinimumSize(new Dimension(70, 30));
+            l.setPreferredSize(new Dimension(70, 30));
+            l.setBorder(BorderFactory.createLineBorder(Color.black));
             label.add(l, gbc);
 
             //delegat
@@ -281,26 +320,28 @@ public class MainForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         turyScrollPane = new javax.swing.JScrollPane();
         turyList = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         turyList.setCellRenderer(new MyListCellRend());
         turyList.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         turyScrollPane.setViewportView(turyList);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(turyScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(turyScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 362;
+        gridBagConstraints.ipady = 273;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(turyScrollPane, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
