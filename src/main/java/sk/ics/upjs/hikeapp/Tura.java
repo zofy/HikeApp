@@ -14,6 +14,16 @@ public class Tura {
 
     private boolean mimoChodnika;
 
+    private String ciel;
+
+    public void setCiel(String ciel) {
+        this.ciel = ciel;
+    }
+
+    public String getCiel() {
+        return ciel;
+    }
+
     public void setMimoChodnika(boolean mimoChodnika) {
         this.mimoChodnika = mimoChodnika;
     }

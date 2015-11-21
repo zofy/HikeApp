@@ -11,4 +11,5 @@ public interface UzivatelDaO {
     public List<Uzivatel> dajVsetkych();
 
     public boolean overMeno(String meno);
+    
 }

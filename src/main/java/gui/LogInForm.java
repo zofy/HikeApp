@@ -16,23 +16,23 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class LogInForm extends javax.swing.JFrame {
 
-    /**
-     * Creates new form LogInForm
-     */
     private JButton loginButton;
     private JButton registerButton;
     private JTextField menoTextField;
     private JTextField hesloTextField;
     private JLabel hostLabel;
+    private JFrame frame;
 
     public LogInForm() {
         initComponents();
+        frame = this;
         setTitle("Prihlásenie");
         loginButton = new JButton("Login");
         registerButton = new JButton("Registruj");
@@ -64,7 +64,8 @@ public class LogInForm extends javax.swing.JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+                frame.dispose();
+                new FilterTurForm().setVisible(true);
             }
 
         });
@@ -73,7 +74,7 @@ public class LogInForm extends javax.swing.JFrame {
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
         //this.setLocationRelativeTo(null);
     }
-// comment
+
     public class LoginPane extends JPanel {
 
         public LoginPane() {
