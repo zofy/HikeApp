@@ -65,7 +65,11 @@ public class MainForm extends javax.swing.JFrame {
                 Dimension sz = e.getComponent().getSize();
                 if (sz.width != 500) {
                     e.getComponent().setSize(500, sz.height);
-                    repaint();
+                    MainForm.this.repaint();
+                    sz = Toolkit.getDefaultToolkit().getScreenSize();
+                    int height = sz.height;
+                    int width = sz.width;
+                    MainForm.this.setLocation((-MainForm.this.getSize().width + width) / 2, (-MainForm.this.getSize().height + height) / 2);
                 }
             }
 
@@ -87,6 +91,12 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         turyList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                MainForm.this.dispose();
+                new TuraForm(turyList.getSelectedIndex()).setVisible(true);
+            }
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -202,7 +212,7 @@ public class MainForm extends javax.swing.JFrame {
             gbc.gridy = 0;
             gbc.insets = new Insets(3, 3, 3, 3);
             //gbc.fill = GridBagConstraints.HORIZONTAL;
-            //gbc.weightx = 0.1;
+            gbc.weightx = 0.1;
             l = new JLabel(String.valueOf(tura.getCasovaNarocnost()) + " hod.");
             l.setMinimumSize(new Dimension(70, 30));
             l.setPreferredSize(new Dimension(70, 30));

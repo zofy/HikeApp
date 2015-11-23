@@ -1,5 +1,7 @@
 package sk.ics.upjs.hikeapp;
 
+import com.mysql.jdbc.Blob;
+
 public class Tura {
 
     private String pohorie;
@@ -12,9 +14,29 @@ public class Tura {
 
     private String popis;
 
+    private String nazov;
+
+    private Blob detail;
+
     private boolean mimoChodnika;
 
     private String ciel;
+
+    public String getNazov() {
+        return nazov;
+    }
+
+    public Blob getDetail() {
+        return detail;
+    }
+
+    public void setNazov(String nazov) {
+        this.nazov = nazov;
+    }
+
+    public void setDetail(Blob detail) {
+        this.detail = detail;
+    }
 
     public void setCiel(String ciel) {
         this.ciel = ciel;

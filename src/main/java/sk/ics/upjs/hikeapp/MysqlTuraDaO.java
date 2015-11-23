@@ -1,6 +1,7 @@
 package sk.ics.upjs.hikeapp;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.mysql.jdbc.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,9 +12,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class MysqlTuraDaO implements TuraDaO {
-    
+
     private JdbcTemplate tmp;
-    
+
     public MysqlTuraDaO() {
         MysqlDataSource ds = new MysqlDataSource();
         ds.setURL("jdbc:mysql://localhost/hike");
@@ -22,12 +23,12 @@ public class MysqlTuraDaO implements TuraDaO {
         tmp = new JdbcTemplate();
         tmp.setDataSource(ds);
     }
-    
+
     @Override
     public List<String> dajZoznamPohori() {
         return tmp.query("Select distinct pohorie from tura", new PohorieMapper());
     }
-    
+
     @Override
     public List<String> dajRocneObdobie() {
         return tmp.query("Select distinct rocneObdobie from tura", new ROMapper());
@@ -50,7 +51,7 @@ public class MysqlTuraDaO implements TuraDaO {
         }
         return buff.toString();
     }
-    
+
     @Override
     public List<Tura> dajVybraneTury(Stack<String> nazvyAtributov, Stack<String> hodnotyAtributov) {
         Object[] hodnoty = new Object[hodnotyAtributov.size()];
@@ -62,29 +63,82 @@ public class MysqlTuraDaO implements TuraDaO {
         String sql = spracujVyberTur(nazvyAtributov);
         return tmp.query(sql, hodnoty, new TuraMapper());
     }
-    
+
+    @Override
+    public String dajPopis(long idT) {
+        List<String> popis = tmp.query("select popis from Popis where idT=?", new Object[]{idT}, new PopisMapper());
+
+        return popis.get(0);
+    }
+
+    @Override
+    public Blob dajDetail(long idT) {
+        List<Blob> detail = tmp.query("select detail from Popis where idT=?", new Object[]{idT}, new DetailMapper());
+        if (!detail.isEmpty()) {
+            return detail.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String dajNazovTury(long idT) {
+        List<String> nazov = tmp.query("select nazov from popis where idT=?", new Object[]{idT}, new NazovMapper());
+        return nazov.get(0);
+    }
+
+    public class NazovMapper implements RowMapper {
+
+        @Override
+        public Object mapRow(ResultSet rs, int i) throws SQLException {
+            String nazovTury = rs.getString("nazov");
+            return nazovTury;
+        }
+
+    }
+
+    public class DetailMapper implements RowMapper {
+
+        @Override
+        public Object mapRow(ResultSet rs, int i) throws SQLException {
+            Blob detail = (Blob) rs.getBlob("detail");
+            return detail;
+        }
+
+    }
+
     public class PohorieMapper implements RowMapper {
-        
+
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             String pohorie = rs.getString("Pohorie");
             return pohorie;
         }
-        
+
     }
-    
+
     public class ROMapper implements RowMapper {
-        
+
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             String ro = rs.getString("RocneObdobie");
             return ro;
         }
-        
+
     }
-    
+
+    public class PopisMapper implements RowMapper {
+
+        @Override
+        public Object mapRow(ResultSet rs, int i) throws SQLException {
+            String popis = rs.getString("Popis");
+            return popis;
+        }
+
+    }
+
     public class TuraMapper implements RowMapper {
-        
+
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             Tura t = new Tura();
@@ -99,20 +153,20 @@ public class MysqlTuraDaO implements TuraDaO {
             return t;
         }
     }
-    
+
     @Override
     public void pridaj(Tura tura) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List<Tura> dajVsetky() {
         return tmp.query("select * from tura", new TuraMapper());
     }
-    
+
     @Override
     public void vymaz(Tura tura) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
