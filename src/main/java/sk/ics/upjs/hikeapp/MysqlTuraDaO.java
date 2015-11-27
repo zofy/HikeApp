@@ -2,11 +2,21 @@ package sk.ics.upjs.hikeapp;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.mysql.jdbc.Blob;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -85,6 +95,34 @@ public class MysqlTuraDaO implements TuraDaO {
     public String dajNazovTury(long idT) {
         List<String> nazov = tmp.query("select nazov from popis where idT=?", new Object[]{idT}, new NazovMapper());
         return nazov.get(0);
+    }
+
+    @Override
+    public List<Image> dajFotky(long idT) {
+        String sql = "select fotka from fotky where idT=?";
+        return tmp.query(sql, new Object[]{idT}, new FotkaMapper());
+    }
+
+    public class FotkaMapper implements RowMapper {
+
+        @Override
+        public Object mapRow(ResultSet rs, int i) throws SQLException {
+            Image image = null;
+            try {
+                InputStream stream = rs.getBinaryStream("fotka");
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                int a = stream.read();
+                while (a >= 0) {
+                    output.write((char) a);
+                    a = stream.read();
+                }
+                image = Toolkit.getDefaultToolkit().createImage(output.toByteArray());
+            } catch (IOException ex) {
+                Logger.getLogger(MysqlTuraDaO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return image;
+        }
+
     }
 
     public class NazovMapper implements RowMapper {

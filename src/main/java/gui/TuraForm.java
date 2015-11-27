@@ -1,5 +1,8 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -7,10 +10,16 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.text.Document;
+import komponenty.ScrollPaneSSCCE;
+import org.jdesktop.swingx.JXTable;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.TuraDaOFactory;
 
@@ -24,9 +33,11 @@ public class TuraForm extends javax.swing.JFrame {
 
     public TuraForm(long idT) {
         initComponents();
+        idT = 1;
         tury = TuraDaOFactory.INSTANCE.getTuraDaO();
-        this.setTitle(tury.dajNazovTury(1));
+        this.setTitle(tury.dajNazovTury(idT));
         this.setLayout(new GridBagLayout());
+
         BufferedImage logInObrazok1 = null;
 
         try {
@@ -37,22 +48,27 @@ public class TuraForm extends javax.swing.JFrame {
         }
         Image scaledObrazok1 = logInObrazok1.getScaledInstance(550,
                 240, Image.SCALE_SMOOTH);
-        fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
-        GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.gridwidth = 0;
+        fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
+        List<ImageIcon> zoznam = this.spracujFotky(tury.dajFotky(idT));
+        //
+        GridBagConstraints gbc = new GridBagConstraints();
+        ScrollPaneSSCCE s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
+
+        // Fotky
+        gbc.gridwidth = 1;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        JTextArea popis = new JTextArea(tury.dajPopis(1));
+        this.add(s, gbc);
+
+        // Popis
+        gbc.gridy++;
+        JTextArea popis = new JTextArea(tury.dajPopis(idT));
         popis.setFont(new Font("Serif", Font.BOLD, 12));
         popis.setEditable(false);
         this.add(popis, gbc);
 
-        /*if (tury.dajDetail(idT) != null) {
-         gbc.gridy++;
-         gbc.gridheight = 4;
-         JTextArea detail = new JTextArea((Document) tury.dajDetail(idT));
-         }*/
+        // Detail tury
         gbc.gridy++;
         JTextArea detail = new JTextArea("wefwefeffhvfjksehvfb \n"
                 + "ejfhvbjehfbvjhfb\n"
@@ -60,6 +76,16 @@ public class TuraForm extends javax.swing.JFrame {
                 + "ewvgweveeeeeeeeeeeeeeeeeeeeee\n"
                 + "eeeeee");
         this.add(detail, gbc);
+    }
+
+    public List<ImageIcon> spracujFotky(List<Image> zoznamFotiek) {
+        List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
+        for (Image img : zoznamFotiek) {
+            img = img.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(img);
+            upraveneFotky.add(icon);
+        }
+        return upraveneFotky;
     }
 
     /**

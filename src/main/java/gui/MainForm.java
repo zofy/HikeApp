@@ -77,7 +77,7 @@ public class MainForm extends javax.swing.JFrame {
         //this.setResizable(false);
         tury = TuraDaOFactory.INSTANCE.getTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
-        turyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        //turyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
         //this.pack();
