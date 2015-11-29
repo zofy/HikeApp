@@ -1,31 +1,35 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.text.Document;
 import komponenty.ScrollPaneSSCCE;
-import org.jdesktop.swingx.JXTable;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.TuraDaOFactory;
 
 public class TuraForm extends javax.swing.JFrame {
 
     private TuraDaO tury;
+    private static JLabel fotkaLabel;
+    private static List<ImageIcon> zoznamPano;
+    private List<ImageIcon> zoznam;
 
     public TuraForm() {
         initComponents();
@@ -36,8 +40,10 @@ public class TuraForm extends javax.swing.JFrame {
         idT = 1;
         tury = TuraDaOFactory.INSTANCE.getTuraDaO();
         this.setTitle(tury.dajNazovTury(idT));
-        this.setLayout(new GridBagLayout());
-
+        fotkaLabel = new JLabel();
+        zoznamPano = spracujPano(tury.dajFotky(idT));
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
         BufferedImage logInObrazok1 = null;
 
         try {
@@ -50,23 +56,30 @@ public class TuraForm extends javax.swing.JFrame {
                 240, Image.SCALE_SMOOTH);
 
         fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
-        List<ImageIcon> zoznam = this.spracujFotky(tury.dajFotky(idT));
+        zoznam = this.spracujFotky(tury.dajFotky(idT));
         //
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(fotkaLabel, gbc);
         ScrollPaneSSCCE s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
+        Dimension d = new Dimension(600, 130);
+        s.setPreferredSize(d);
+        s.setMaximumSize(d);
 
         // Fotky
         gbc.gridwidth = 1;
+        gbc.gridheight = 1;
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        this.add(s, gbc);
+        gbc.gridy = 1;
+        panel.add(s, gbc);
 
         // Popis
         gbc.gridy++;
         JTextArea popis = new JTextArea(tury.dajPopis(idT));
         popis.setFont(new Font("Serif", Font.BOLD, 12));
         popis.setEditable(false);
-        this.add(popis, gbc);
+        panel.add(popis, gbc);
 
         // Detail tury
         gbc.gridy++;
@@ -75,17 +88,41 @@ public class TuraForm extends javax.swing.JFrame {
                 + "ewjvfbjjhvbjshvbjk\n"
                 + "ewvgweveeeeeeeeeeeeeeeeeeeeee\n"
                 + "eeeeee");
-        this.add(detail, gbc);
+        panel.add(detail, gbc);
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        this.setContentPane(scrollPane);
     }
 
     public List<ImageIcon> spracujFotky(List<Image> zoznamFotiek) {
         List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
         for (Image img : zoznamFotiek) {
-            img = img.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
+            img = img.getScaledInstance(200, 120, Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon(img);
             upraveneFotky.add(icon);
         }
         return upraveneFotky;
+    }
+
+    public List<ImageIcon> spracujPano(List<Image> zoznamFotiek) {
+        ImageIcon bimg = null;
+        List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
+        for (Image img : zoznamFotiek) {
+            bimg = new ImageIcon(img);
+            System.out.println(bimg.getIconHeight());
+            System.out.println(bimg.getIconWidth());
+            img = img.getScaledInstance(550, 240, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(img);
+            upraveneFotky.add(icon);
+        }
+        return upraveneFotky;
+    }
+
+    public static void zmenFotku(int idx) {
+        fotkaLabel.setIcon(zoznamPano.get(idx));
     }
 
     /**
@@ -97,21 +134,17 @@ public class TuraForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        fotkaLabel = new javax.swing.JLabel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fotkaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(fotkaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 89, Short.MAX_VALUE))
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -153,6 +186,5 @@ public class TuraForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel fotkaLabel;
     // End of variables declaration//GEN-END:variables
 }

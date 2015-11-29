@@ -1,6 +1,9 @@
 package komponenty;
 
+import gui.TuraForm;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,40 +13,16 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 public class ScrollPaneSSCCE extends JPanel {
 
+    private JTable table;
+
     public ScrollPaneSSCCE(ArrayList<ImageIcon> zoznamFotiek) {
         setLayout(new BorderLayout());
-        Dimension d = new Dimension(600, 150);
-        this.setMinimumSize(d);
-        /*BufferedImage logInObrazok1 = null;
-        BufferedImage logInObrazok2 = null;
-        BufferedImage logInObrazok3 = null;
-        
-        try {
-        logInObrazok1 = ImageIO.read(new File("C:\\logo\\lvl1.png"));
-        logInObrazok2 = ImageIO.read(new File("C:\\logo\\lvl2.png"));
-        logInObrazok3 = ImageIO.read(new File("C:\\logo\\lvl3.png"));
-        
-        } catch (IOException ex) {
-        System.err.println("Neni obrazok!");
-        }
-        Image scaledObrazok1 = logInObrazok1.getScaledInstance(65,
-        d.height, Image.SCALE_SMOOTH);
-        Image scaledObrazok2 = logInObrazok2.getScaledInstance(65,
-        d.height, Image.SCALE_SMOOTH);
-        Image scaledObrazok3 = logInObrazok3.getScaledInstance(65,
-        d.height, Image.SCALE_SMOOTH);
-        ImageIcon img1 = new ImageIcon(scaledObrazok1);
-        ImageIcon img2 = new ImageIcon(scaledObrazok2);
-        ImageIcon img3 = new ImageIcon(scaledObrazok3);*/
-        /* ArrayList<ImageIcon> zoznamFotiek = new ArrayList<ImageIcon>();
-        zoznamFotiek.add(img1);
-        zoznamFotiek.add(img2);
-        zoznamFotiek.add(img3);*/
-        JTable table = new JTable(1, zoznamFotiek.size());
-        
+        table = new JTable(1, zoznamFotiek.size());
+
         class ImageRenderer extends DefaultTableCellRenderer {
 
             JLabel lbl = new JLabel();
@@ -55,16 +34,41 @@ public class ScrollPaneSSCCE extends JPanel {
                 return lbl;
             }
         }
-        
+
+        DefaultTableModel model = new DefaultTableModel(1, zoznamFotiek.size()) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+        };
+        table.setDefaultRenderer(Object.class, new ImageRenderer());
+        table.setModel(model);
+        for (int i = 0; i < zoznamFotiek.size(); i++) {
+            model.setValueAt(zoznamFotiek.get(i), 0, i);
+            table.getColumnModel().getColumn(i).setPreferredWidth(200);
+        }
+
         table.setShowGrid(false);
         table.setTableHeader(null);
-        table.setBackground(Color.white);
-        table.setRowHeight(d.height);
-        table.setDefaultRenderer(Object.class, new ImageRenderer());
-        for (int i = 0; i < zoznamFotiek.size(); i++) {
-            table.setValueAt(zoznamFotiek.get(i), 0, i);
-        }
-        
+        table.setRowHeight(120);
+        //table.setDefaultRenderer(Object.class, new ImageRenderer());
+        /*for (int i = 0; i < zoznamFotiek.size(); i++) {
+         table.setValueAt(zoznamFotiek.get(i), 0, i);
+         table.getColumnModel().getColumn(i).setMinWidth(200);
+         }*/
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int idx = table.getSelectedColumn();
+                System.out.println(idx);
+                TuraForm.zmenFotku(idx);
+            }
+
+        });
         /*for (int i = 0; i < 3; i++) {
          table.getColumnModel().getColumn(i).setPreferredWidth(50);
          table.getColumnModel().getColumn(i).setMaxWidth(50);
@@ -72,7 +76,7 @@ public class ScrollPaneSSCCE extends JPanel {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        add(scrollPane);
+        //add(scrollPane);
 
         JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
 
@@ -87,25 +91,25 @@ public class ScrollPaneSSCCE extends JPanel {
         east.setAction(
                 new ActionMapAction("", horizontal, "positiveUnitIncrement"));
         add(east, BorderLayout.EAST);
-
+        add(scrollPane);
     }
 
     /*    private static void createAndShowUI() {
-    JFrame frame = new JFrame("ScrollPaneSSCCE");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    ScrollPaneSSCCE s = new ScrollPaneSSCCE();
-    frame.add(s, BorderLayout.SOUTH);
-    frame.setSize(400, 300);
-    frame.setLocationByPlatform(true);
-    frame.setVisible(true);
-    frame.pack();
-    }
+     JFrame frame = new JFrame("ScrollPaneSSCCE");
+     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+     ScrollPaneSSCCE s = new ScrollPaneSSCCE();
+     frame.add(s, BorderLayout.SOUTH);
+     frame.setSize(400, 300);
+     frame.setLocationByPlatform(true);
+     frame.setVisible(true);
+     frame.pack();
+     }
     
-    public static void main(String[] args) {
-    EventQueue.invokeLater(new Runnable() {
-    public void run() {
-    createAndShowUI();
-    }
-    });
-    }*/
+     public static void main(String[] args) {
+     EventQueue.invokeLater(new Runnable() {
+     public void run() {
+     createAndShowUI();
+     }
+     });
+     }*/
 }
