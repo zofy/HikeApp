@@ -109,12 +109,14 @@ public class TuraForm extends javax.swing.JFrame {
 
     public List<ImageIcon> spracujPano(List<Image> zoznamFotiek) {
         ImageIcon bimg = null;
+        int height = 0;
+        int width = 0;
         List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
         for (Image img : zoznamFotiek) {
             bimg = new ImageIcon(img);
-            System.out.println(bimg.getIconHeight());
-            System.out.println(bimg.getIconWidth());
-            img = img.getScaledInstance(550, 240, Image.SCALE_SMOOTH);
+            height = bimg.getIconHeight() / 2;
+            width = bimg.getIconWidth() / 2;
+            img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon(img);
             upraveneFotky.add(icon);
         }
@@ -122,6 +124,8 @@ public class TuraForm extends javax.swing.JFrame {
     }
 
     public static void zmenFotku(int idx) {
+        Dimension d = new Dimension(zoznamPano.get(idx).getIconWidth(), zoznamPano.get(idx).getIconHeight());
+        fotkaLabel.setMinimumSize(d);
         fotkaLabel.setIcon(zoznamPano.get(idx));
     }
 
