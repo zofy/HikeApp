@@ -11,7 +11,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import sk.ics.upjs.hikeapp.TuraDaO;
-import sk.ics.upjs.hikeapp.TuraDaOFactory;
+import sk.ics.upjs.hikeapp.DaOFactory;
 
 public class FilterTurForm extends javax.swing.JFrame {
 
@@ -30,7 +30,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         obtiaznostButtonGroup.add(obtiaznostRadioButton5);
 
         //naplni PohorieComboBox
-        tury = TuraDaOFactory.INSTANCE.getTuraDaO();
+        tury = DaOFactory.INSTANCE.getTuraDaO();
         List<String> zoznam = tury.dajZoznamPohori();
         Vector zoznamCB = new Vector();
         zoznamCB.add("<Pohorie>");
@@ -41,12 +41,12 @@ public class FilterTurForm extends javax.swing.JFrame {
         pohorieComboBox.setModel(model);
         //naplni rocneObdobieComboBox
 
-        zoznam = tury.dajRocneObdobie();
         Vector zoznamROCB = new Vector();
         zoznamROCB.add("<RocneObdobie>");
-        for (String ro : zoznam) {
-            zoznamROCB.add(ro);
-        }
+        zoznamROCB.add("Jar");
+        zoznamROCB.add("Leto");
+        zoznamROCB.add("Jeseň");
+        zoznamROCB.add("Zima");
         DefaultComboBoxModel modelRO = new DefaultComboBoxModel(zoznamROCB);
         rocneObdobieComboBox.setModel(modelRO);
 

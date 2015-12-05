@@ -18,8 +18,6 @@ public interface TuraDaO {
 
     public List<String> dajZoznamPohori();
 
-    public List<String> dajRocneObdobie();
-
     public String dajPopis(long idT);
 
     public Blob dajDetail(long idT);

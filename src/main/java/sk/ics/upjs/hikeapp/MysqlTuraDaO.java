@@ -39,11 +39,6 @@ public class MysqlTuraDaO implements TuraDaO {
         return tmp.query("Select distinct pohorie from tura", new PohorieMapper());
     }
 
-    @Override
-    public List<String> dajRocneObdobie() {
-        return tmp.query("Select distinct rocneObdobie from tura", new ROMapper());
-    }
-
     // zatial je metoda tu: na spracovanie vyberu tur
     public String spracujVyberTur(Stack<String> zoznamAtributov) {
         StringBuilder buff = new StringBuilder();
@@ -151,16 +146,6 @@ public class MysqlTuraDaO implements TuraDaO {
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             String pohorie = rs.getString("Pohorie");
             return pohorie;
-        }
-
-    }
-
-    public class ROMapper implements RowMapper {
-
-        @Override
-        public Object mapRow(ResultSet rs, int i) throws SQLException {
-            String ro = rs.getString("RocneObdobie");
-            return ro;
         }
 
     }

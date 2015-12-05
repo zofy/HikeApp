@@ -18,8 +18,10 @@ import javax.swing.table.DefaultTableModel;
 public class ScrollPaneSSCCE extends JPanel {
 
     private JTable table;
+    private TuraForm turaForm;
 
     public ScrollPaneSSCCE(ArrayList<ImageIcon> zoznamFotiek) {
+        turaForm = new TuraForm();
         setLayout(new BorderLayout());
         table = new JTable(1, zoznamFotiek.size());
 
@@ -65,7 +67,7 @@ public class ScrollPaneSSCCE extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 int idx = table.getSelectedColumn();
                 System.out.println(idx);
-                TuraForm.zmenFotku(idx);
+                turaForm.zmenFotku(idx);
             }
 
         });

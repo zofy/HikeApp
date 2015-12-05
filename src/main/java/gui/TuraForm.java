@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import komponenty.ScrollPaneSSCCE;
 import sk.ics.upjs.hikeapp.TuraDaO;
-import sk.ics.upjs.hikeapp.TuraDaOFactory;
+import sk.ics.upjs.hikeapp.DaOFactory;
 
 public class TuraForm extends javax.swing.JFrame {
 
@@ -38,7 +38,7 @@ public class TuraForm extends javax.swing.JFrame {
     public TuraForm(long idT) {
         initComponents();
         idT = 1;
-        tury = TuraDaOFactory.INSTANCE.getTuraDaO();
+        tury = DaOFactory.INSTANCE.getTuraDaO();
         this.setTitle(tury.dajNazovTury(idT));
         fotkaLabel = new JLabel();
         zoznamPano = spracujPano(tury.dajFotky(idT));
@@ -123,7 +123,7 @@ public class TuraForm extends javax.swing.JFrame {
         return upraveneFotky;
     }
 
-    public static void zmenFotku(int idx) {
+    public void zmenFotku(int idx) {
         Dimension d = new Dimension(zoznamPano.get(idx).getIconWidth(), zoznamPano.get(idx).getIconHeight());
         fotkaLabel.setMinimumSize(d);
         fotkaLabel.setIcon(zoznamPano.get(idx));

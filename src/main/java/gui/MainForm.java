@@ -37,7 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
-import sk.ics.upjs.hikeapp.TuraDaOFactory;
+import sk.ics.upjs.hikeapp.DaOFactory;
 
 public class MainForm extends javax.swing.JFrame {
 
@@ -75,7 +75,7 @@ public class MainForm extends javax.swing.JFrame {
 
         });
         //this.setResizable(false);
-        tury = TuraDaOFactory.INSTANCE.getTuraDaO();
+        tury = DaOFactory.INSTANCE.getTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
         //turyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         turyList.setListData(zoznamTur.toArray());

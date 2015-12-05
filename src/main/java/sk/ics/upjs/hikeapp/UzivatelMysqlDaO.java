@@ -27,8 +27,9 @@ public class UzivatelMysqlDaO implements UzivatelDaO {
     }
 
     @Override
-    public Uzivatel dajUzivatela(String meno, String heslo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Long getUserId(String meno) {
+        Uzivatel u = (Uzivatel) tmp.query("select * from uzivatel where meno = ?", new Object[]{meno}, new UzivatelMapper());
+        return u.getId();
     }
 
     @Override
