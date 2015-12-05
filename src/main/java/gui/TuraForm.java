@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,6 +33,7 @@ public class TuraForm extends javax.swing.JFrame {
     private static JLabel fotkaLabel;
     private static List<ImageIcon> zoznamPano;
     private List<ImageIcon> zoznam;
+    private ScrollPaneSSCCE s;
 
     public TuraForm() {
         initComponents();
@@ -62,7 +66,8 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(fotkaLabel, gbc);
-        ScrollPaneSSCCE s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
+        s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
+
         Dimension d = new Dimension(600, 130);
         s.setPreferredSize(d);
         s.setMaximumSize(d);
@@ -73,6 +78,7 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(s, gbc);
+        //s.addMouseListener(s);
 
         // Popis
         gbc.gridy++;

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -71,14 +72,14 @@ public class MysqlTuraDaO implements TuraDaO {
 
     @Override
     public String dajPopis(long idT) {
-        List<String> popis = tmp.query("select popis from Popis where idT=?", new Object[]{idT}, new PopisMapper());
+        List<String> popis = tmp.query("select popis from Tura where idT=?", new Object[]{idT}, new PopisMapper());
 
         return popis.get(0);
     }
 
     @Override
     public Blob dajDetail(long idT) {
-        List<Blob> detail = tmp.query("select detail from Popis where idT=?", new Object[]{idT}, new DetailMapper());
+        List<Blob> detail = tmp.query("select detail from tura where idT=?", new Object[]{idT}, new DetailMapper());
         if (!detail.isEmpty()) {
             return detail.get(0);
         } else {
@@ -88,7 +89,7 @@ public class MysqlTuraDaO implements TuraDaO {
 
     @Override
     public String dajNazovTury(long idT) {
-        List<String> nazov = tmp.query("select nazov from popis where idT=?", new Object[]{idT}, new NazovMapper());
+        List<String> nazov = tmp.query("select nazov from tura where idT=?", new Object[]{idT}, new NazovMapper());
         return nazov.get(0);
     }
 
@@ -164,6 +165,7 @@ public class MysqlTuraDaO implements TuraDaO {
 
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
+            String popis = null;
             Tura t = new Tura();
             t.setPohorie(rs.getString("Pohorie"));
             t.setRocneObdobie(rs.getString("RocneObdobie"));
@@ -173,13 +175,46 @@ public class MysqlTuraDaO implements TuraDaO {
             t.setHodnotenie(rs.getDouble("Hodnotenie"));
             t.setMimoChodnika(rs.getBoolean("MimoChodnik"));
             t.setCiel(rs.getString("ciel"));
+            t.setNazov(rs.getString("Nazov"));
+            popis = (rs.getString("Popis"));
+            t.setPopis(spracujPopisDoListu(popis));
+            t.setDetail(rs.getString("Detail"));
             return t;
         }
     }
 
+    public LinkedList<String> spracujPopisDoListu(String popis) {
+        LinkedList<String> p = new LinkedList<String>();
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < popis.length(); i++) {
+            if (popis.charAt(i) == '-') {
+                p.add(ret.toString());
+                ret.delete(0, ret.length());
+            } else {
+                ret.append(popis.charAt(i));
+            }
+        }
+        return p;
+    }
+
+    public String spracujPopisDoStringu(LinkedList<String> bodyTury) {
+        StringBuilder ret = new StringBuilder();
+        for (String bod : bodyTury) {
+            if (ret.length() == 0) {
+                ret.append(bod);
+            } else {
+                ret.append("-" + bod);
+            }
+        }
+        return ret.toString();
+    }
+
     @Override
     public void pridaj(Tura tura) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String insert = "insert into tura values(?,?,?,?,?,?,?,?,?,?,?,?)";
+        tmp.update(insert, null, tura.getPohorie(), tura.getCiel(), tura.getRocneObdobie(), tura.getObtiaznost(),
+                tura.getCasovaNarocnost(), tura.getDlzka(), tura.isMimoChodnika(), tura.getHodnotenie(),
+                tura.getNazov(), spracujPopisDoStringu(tura.getPopis()), tura.getDetail());
     }
 
     @Override

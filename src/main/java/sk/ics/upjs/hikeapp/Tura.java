@@ -1,6 +1,7 @@
 package sk.ics.upjs.hikeapp;
 
 import com.mysql.jdbc.Blob;
+import java.util.LinkedList;
 
 public class Tura {
 
@@ -12,21 +13,29 @@ public class Tura {
 
     private double casovaNarocnost;
 
-    private String popis;
+    private LinkedList<String> popis;
 
     private String nazov;
 
-    private Blob detail;
+    private String detail;
 
     private boolean mimoChodnika;
 
     private String ciel;
 
+    public LinkedList<String> getPopis() {
+        return popis;
+    }
+
+    public void setPopis(LinkedList<String> popis) {
+        this.popis = popis;
+    }
+
     public String getNazov() {
         return nazov;
     }
 
-    public Blob getDetail() {
+    public String getDetail() {
         return detail;
     }
 
@@ -34,7 +43,7 @@ public class Tura {
         this.nazov = nazov;
     }
 
-    public void setDetail(Blob detail) {
+    public void setDetail(String detail) {
         this.detail = detail;
     }
 
@@ -88,10 +97,6 @@ public class Tura {
         this.casovaNarocnost = casovaNarocnost;
     }
 
-    public void setPopis(String popis) {
-        this.popis = popis;
-    }
-
     public void setRocneObdobie(String rocneObdobie) {
         this.rocneObdobie = rocneObdobie;
     }
@@ -110,10 +115,6 @@ public class Tura {
 
     public double getCasovaNarocnost() {
         return casovaNarocnost;
-    }
-
-    public String getPopis() {
-        return popis;
     }
 
     public String getRocneObdobie() {
