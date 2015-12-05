@@ -1,23 +1,20 @@
 package gui;
 
+import com.mysql.jdbc.Blob;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,17 +27,16 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 import komponenty.FileChooser;
 import komponenty.ImageFileView;
 import komponenty.ImageFilter;
 import komponenty.ImagePreview;
-import komponenty.ScrollPaneSSCCE;
 import org.jdesktop.swingx.JXTextArea;
+import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.MysqlTuraDaO;
+import sk.ics.upjs.hikeapp.Tura;
+import sk.ics.upjs.hikeapp.TuraDaO;
 
 public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
@@ -62,8 +58,12 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private JTextArea fotkyArea = new JTextArea(5, 10);
     private JButton pridajFotky = new JButton("Pridaj fotky");
     private JButton submit = new JButton("Pridaj");
-    //private JFileChooser fc = new JFileChooser();
     private FileChooser fc = new FileChooser();
+
+    private TuraDaO tury = DaOFactory.INSTANCE.getTuraDaO();
+
+    private LinkedList<String> bodyTury = new LinkedList<String>();
+    private StringBuilder ret = new StringBuilder();
 
     public VlozTuruForm() {
         initComponents();
@@ -73,44 +73,68 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //e.ge
-        fc.addChoosableFileFilter(new ImageFilter());
-        fc.setAcceptAllFileFilterUsed(false);
+        if (e.getSource().equals(pridajFotky)) {
+            fc.addChoosableFileFilter(new ImageFilter());
+            fc.setAcceptAllFileFilterUsed(false);
 
-        //Add custom icons for file types.
-        fc.setFileView(new ImageFileView());
+            //Add custom icons for file types.
+            fc.setFileView(new ImageFileView());
 
-        //Add the preview pane.
-        fc.setAccessory(new ImagePreview(fc));
-        fc.setMultiSelectionEnabled(true);
-        int returnVal = fc.showDialog(VlozTuruForm.this, "Vlož");
+            //Add the preview pane.
+            fc.setAccessory(new ImagePreview(fc));
+            fc.setMultiSelectionEnabled(true);
+            int returnVal = fc.showDialog(VlozTuruForm.this, "Vlož");
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File[] obrazky = fc.getSelectedFiles();
-            int pocitadlo = 1;
-            //String s = "jpg";
-            for (File obr : obrazky) {
-                //if (s.equals(fc.getTypeDescription(obr))) {
-                fotkyArea.append(pocitadlo + ".) " + obr.getName()
-                        + "." + "\n");
-                //}
-                //System.out.println(fc.getTypeDescription(obr));
-                //System.out.println(fc.getIcon(obr));
-                pocitadlo++;
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File[] obrazky = fc.getSelectedFiles();
+                int pocitadlo = 1;
+                for (File obr : obrazky) {
+                    fotkyArea.append(pocitadlo + ".) " + obr.getName()
+                            + "." + "\n");
+                    pocitadlo++;
+                }
             }
-        }/* else {
-         fotkyArea.append("-------------------\n");
-         }*/
 
-        fotkyArea.setCaretPosition(fotkyArea.getDocument().getLength());
+            fotkyArea.setCaretPosition(fotkyArea.getDocument().getLength());
 
-        //Reset the file chooser for the next time it's shown.
-        fc.setSelectedFile(null);
+            //Reset the file chooser for the next time it's shown.
+            fc.setSelectedFile(null);
+        }
+        if (e.getSource().equals(submit)) {
+            Tura t = new Tura();
+            t.setPohorie(pohorieField.getText());
+            t.setRocneObdobie(roField.getText());
+            t.setObtiaznost((int) spin.getValue());
+            t.setCasovaNarocnost(Integer.parseInt(casField.getText()));
+            t.setDlzka(Integer.valueOf(dlzkaField.getText()));
+            t.setHodnotenie(4);
+            t.setMimoChodnika(offTrackBox.isSelected());
+            t.setCiel(cielField.getText());
+            t.setNazov(nazovField.getText());
+            t.setPopis(bodyTury);
+            t.setDetail(popis.getText());
+
+            tury.pridaj(t);
+            this.dispose();
+        }
+        if (e.getSource().equals(east)) {
+            if (ret.length() == 0) {
+                ret.append(bodyTuryField.getText());
+                body.setText(ret.toString());
+            } else {
+                ret.append("-" + bodyTuryField.getText());
+                body.setText(ret.toString());
+            }
+            bodyTury.add(bodyTuryField.getText());
+            bodyTuryField.setText("");
+
+        }
 
     }
 
     public void inicializujSa() {
         setTitle("Nová túra");
+        submit.addActionListener(this);
         pridajFotky.addActionListener(this);
         fotkyArea.setEditable(false);
         JScrollPane scrollFotkyArea = new JScrollPane(fotkyArea);
@@ -183,12 +207,14 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(west, gbc);
+        west.addActionListener(this);
 
         gbc.gridy = 2;
         gbc.gridx = 3;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(3, 0, 3, 3);
         panel.add(east, gbc);
+        east.addActionListener(this);
 
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(3, 3, 3, 3);
