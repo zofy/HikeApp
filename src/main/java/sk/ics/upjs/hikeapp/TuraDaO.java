@@ -3,6 +3,7 @@ package sk.ics.upjs.hikeapp;
 import com.mysql.jdbc.Blob;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import java.util.Stack;
 
@@ -25,4 +26,6 @@ public interface TuraDaO {
     public String dajNazovTury(long idT);
 
     public List<Image> dajFotky(long idT);
+
+    public void pridajFotky(List<File> fotky);
 }

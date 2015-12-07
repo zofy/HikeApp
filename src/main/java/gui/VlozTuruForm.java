@@ -1,8 +1,8 @@
 package gui;
 
-import com.mysql.jdbc.Blob;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -59,11 +60,17 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private JButton pridajFotky = new JButton("Pridaj fotky");
     private JButton submit = new JButton("Pridaj");
     private FileChooser fc = new FileChooser();
+    private List<File> fotky = new LinkedList<File>();
 
     private TuraDaO tury = DaOFactory.INSTANCE.getTuraDaO();
 
     private LinkedList<String> bodyTury = new LinkedList<String>();
     private StringBuilder ret = new StringBuilder();
+
+    private int idx = -1;
+    private String bod;
+    private boolean vypinac1 = false;
+    private boolean vypinac2 = true;
 
     public VlozTuruForm() {
         initComponents();
@@ -89,6 +96,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 File[] obrazky = fc.getSelectedFiles();
                 int pocitadlo = 1;
                 for (File obr : obrazky) {
+                    fotky.add(obr);
                     fotkyArea.append(pocitadlo + ".) " + obr.getName()
                             + "." + "\n");
                     pocitadlo++;
@@ -115,21 +123,77 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
             t.setDetail(popis.getText());
 
             tury.pridaj(t);
+            // este pridat aj fotky
+            tury.pridajFotky(fotky);
             this.dispose();
         }
         if (e.getSource().equals(east)) {
-            if (ret.length() == 0) {
-                ret.append(bodyTuryField.getText());
-                body.setText(ret.toString());
-            } else {
-                ret.append("-" + bodyTuryField.getText());
-                body.setText(ret.toString());
+            if (vypinac1) {
+                idx = idx + 1;
+                vypinac1 = false;
             }
-            bodyTury.add(bodyTuryField.getText());
-            bodyTuryField.setText("");
+            bod = bodyTuryField.getText();
 
+            if (idx != bodyTury.size() - 1) {
+                if (bod.equals("")) {
+                    bodyTury.remove(idx);
+                } else {
+                    bodyTury.set(idx, bod);
+                }
+                idx++;
+                bodyTuryField.setText(bodyTury.get(idx));
+            } else {
+                if (vypinac2) {
+                    if (!bodyTuryField.getText().isEmpty()) {
+                        bodyTury.add(bod);
+                        bodyTuryField.setText("");
+                        idx++;
+                    }
+                } else {
+                    if (bod.equals(bodyTury.get(bodyTury.size() - 1))) {
+                        bodyTuryField.setText("");
+                        vypinac2 = true;
+                    } else if (!bod.equals(bodyTury.get(bodyTury.size() - 1))) {
+                        bodyTury.set(bodyTury.size() - 1, bod);
+                        bodyTuryField.setText("");
+                        vypinac2 = true;
+                    }
+                }
+            }
+            vypis(bodyTury);
+            System.out.println(idx);
         }
+        if (e.getSource().equals(west)) {
+            vypinac1 = true;
+            vypinac2 = false;
+            bod = bodyTuryField.getText();
+            if (idx != bodyTury.size() - 1) {
+                if (bod.equals("")) {
+                    bodyTury.remove(idx + 1);
+                } else {
+                    bodyTury.set(idx + 1, bod);
+                }
+            }
+            if (idx == -1) {
+                idx++;
+            }
+            idx--;
+            bodyTuryField.setText(bodyTury.get(idx + 1));
+            vypis(bodyTury);
+            System.out.println(idx + 1);
+        }
+    }
 
+    public void vypis(LinkedList<String> list) {
+        for (String bod : list) {
+            if (ret.length() == 0) {
+                ret.append(bod);
+            } else {
+                ret.append("-" + bod);
+            }
+        }
+        body.setText(ret.toString());
+        ret.delete(0, ret.length());
     }
 
     public void inicializujSa() {
@@ -228,6 +292,9 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         body.setMinimumSize(d);
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
+        body.setFont(new Font("Calibri", Font.BOLD, 14));
+        body.setHorizontalAlignment(JLabel.CENTER);
+        body.setVerticalAlignment(JLabel.CENTER);
         panel.add(body, gbc);
         gbc.ipady = 0;
 

@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -97,6 +98,11 @@ public class MysqlTuraDaO implements TuraDaO {
     public List<Image> dajFotky(long idT) {
         String sql = "select fotka from fotky where idT=?";
         return tmp.query(sql, new Object[]{idT}, new FotkaMapper());
+    }
+
+    @Override
+    public void pridajFotky(List<File> fotky) {
+        
     }
 
     public class FotkaMapper implements RowMapper {
