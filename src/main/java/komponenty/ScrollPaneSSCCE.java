@@ -20,9 +20,13 @@ import javax.swing.plaf.basic.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class ScrollPaneSSCCE extends JPanel implements MouseListener{
+public class ScrollPaneSSCCE extends JPanel{
 
     private JTable table;
+
+    public JTable getTable() {
+        return table;
+    }
     private TuraForm turaForm;
 
     public ScrollPaneSSCCE(ArrayList<ImageIcon> zoznamFotiek) {
@@ -73,17 +77,18 @@ public class ScrollPaneSSCCE extends JPanel implements MouseListener{
          table.getColumnModel().getColumn(i).setMinWidth(200);
          }*/
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        ///table.addMouseListener(this);
         /* table.addMouseListener(new MouseAdapter() {
         
-        @Override
-        public void mouseClicked(MouseEvent e) {
-        int idx = table.getSelectedColumn();
-        System.out.println(idx);
-        getSelected();
-        turaForm.zmenFotku(idx);
-        }
+         @Override
+         public void mouseClicked(MouseEvent e) {
+         int idx = table.getSelectedColumn();
+         System.out.println(idx);
+         getSelected();
+         turaForm.zmenFotku(idx);
+         }
         
-        });*/
+         });*/
 
         /*for (int i = 0; i < 3; i++) {
          table.getColumnModel().getColumn(i).setPreferredWidth(50);
@@ -108,35 +113,6 @@ public class ScrollPaneSSCCE extends JPanel implements MouseListener{
                 new ActionMapAction("", horizontal, "positiveUnitIncrement"));
         add(east, BorderLayout.EAST);
         add(scrollPane);
-    }
-
-    public void getSelected() {
-        System.out.println("bubu");;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("huhuhuuhuhuhuh");
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

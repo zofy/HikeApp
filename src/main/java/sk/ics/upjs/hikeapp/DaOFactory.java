@@ -8,7 +8,7 @@ public enum DaOFactory {
         return new MysqlTuraDaO();
     }
 
-    public UzivatelMysqlDaO getUser() {
+    public UzivatelDaO getUser() {
         return new UzivatelMysqlDaO();
     }
 }

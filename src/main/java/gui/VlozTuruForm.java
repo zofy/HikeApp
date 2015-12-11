@@ -28,11 +28,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 import komponenty.FileChooser;
 import komponenty.ImageFileView;
 import komponenty.ImageFilter;
 import komponenty.ImagePreview;
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTextArea;
 import sk.ics.upjs.hikeapp.DaOFactory;
 import sk.ics.upjs.hikeapp.MysqlTuraDaO;
@@ -49,10 +51,10 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private JTextField dlzkaField = new JTextField();
     private JTextField cielField = new JTextField();
     private JCheckBox offTrackBox = new JCheckBox();
-    private JLabel body = new JLabel();
+    private JXLabel body = new JXLabel();
     private BasicArrowButton east = new BasicArrowButton(BasicArrowButton.EAST);
     private BasicArrowButton west = new BasicArrowButton(BasicArrowButton.WEST);
-    private JXTextArea popis = new JXTextArea();
+    private JTextArea popis = new JTextArea();
     private JLabel fotkaLabel = new JLabel();
     private SpinnerModel sm = new SpinnerNumberModel(1, 1, 5, 1);
     private JSpinner spin = new JSpinner(sm);
@@ -71,6 +73,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private String bod;
     private boolean vypinac1 = false;
     private boolean vypinac2 = true;
+    private Dimension velkostBodyLabel = new Dimension();
 
     public VlozTuruForm() {
         initComponents();
@@ -110,12 +113,17 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         }
         if (e.getSource().equals(submit)) {
             Tura t = new Tura();
+            
+            // tu vlozit ifaky na overovanie policok a metodu na cieselne policka
+            
             t.setPohorie(pohorieField.getText());
             t.setRocneObdobie(roField.getText());
             t.setObtiaznost((int) spin.getValue());
-            t.setCasovaNarocnost(Integer.parseInt(casField.getText()));
-            t.setDlzka(Integer.valueOf(dlzkaField.getText()));
+            t.setCasovaNarocnost(Double.parseDouble(casField.getText().trim().replaceAll(",", ".")));
+            t.setDlzka(Double.parseDouble(dlzkaField.getText().trim().replaceAll(",", ".")));
+            // nastavit hodnotenie
             t.setHodnotenie(4);
+            //
             t.setMimoChodnika(offTrackBox.isSelected());
             t.setCiel(cielField.getText());
             t.setNazov(nazovField.getText());
@@ -161,7 +169,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 }
             }
             vypis(bodyTury);
-            System.out.println(idx);
+            //System.out.println(idx);
         }
         if (e.getSource().equals(west)) {
             vypinac1 = true;
@@ -180,18 +188,32 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
             idx--;
             bodyTuryField.setText(bodyTury.get(idx + 1));
             vypis(bodyTury);
-            System.out.println(idx + 1);
+            //System.out.println(idx + 1);
         }
     }
 
     public void vypis(LinkedList<String> list) {
-        for (String bod : list) {
-            if (ret.length() == 0) {
-                ret.append(bod);
+        int dlzka = 0;
+        int pocetRiadkov = 0;
+        for (String bod : bodyTury) {
+            dlzka += bod.length();
+            System.out.println(dlzka);
+            if (dlzka < 50) {
+                if (ret.length() == 0) {
+                    ret.append(bod);
+                } else {
+                    ret.append("-" + bod);
+                }
             } else {
+                pocetRiadkov++;
+                ret.append("-");
+                ret.append('\n');
                 ret.append("-" + bod);
+                dlzka = bod.length();
             }
         }
+        velkostBodyLabel.setSize(600, pocetRiadkov * 25);
+        body.setMinimumSize(velkostBodyLabel);
         body.setText(ret.toString());
         ret.delete(0, ret.length());
     }
@@ -201,6 +223,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         submit.addActionListener(this);
         pridajFotky.addActionListener(this);
         fotkyArea.setEditable(false);
+        body.setLineWrap(true);
         JScrollPane scrollFotkyArea = new JScrollPane(fotkyArea);
         scrollFotkyArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollFotkyArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -232,7 +255,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 6;
-        fotkaLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+        //fotkaLabel.setBorder(BorderFactory.createLineBorder(Color.black));
         panel.add(fotkaLabel, gbc);
         gbc.gridwidth = 1;
 
@@ -241,12 +264,12 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         d = new Dimension(100, 25);
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel nazov = new JLabel("Názov túry");
-        nazov.setBorder(BorderFactory.createLineBorder(Color.black));
+        //nazov.setBorder(BorderFactory.createLineBorder(Color.black));
         nazov.setMaximumSize(d);
         panel.add(nazov, gbc);
 
         JLabel bodyTury = new JLabel("Body túry");
-        bodyTury.setBorder(BorderFactory.createLineBorder(Color.black));
+        //bodyTury.setBorder(BorderFactory.createLineBorder(Color.black));
         bodyTury.setMaximumSize(d);
         gbc.gridy++;
         panel.add(bodyTury, gbc);
@@ -286,15 +309,15 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 3;
         gbc.gridx = 1;
         gbc.ipady = 50;
-        d.setSize(350, 150);
+        //d.setSize(350, 150);
         body.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        body.setPreferredSize(d);
-        body.setMinimumSize(d);
+        //body.setPreferredSize(d);
+        //body.setMinimumSize(d);
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
         body.setFont(new Font("Calibri", Font.BOLD, 14));
-        body.setHorizontalAlignment(JLabel.CENTER);
-        body.setVerticalAlignment(JLabel.CENTER);
+        body.setTextAlignment(JXLabel.TextAlignment.CENTER);
+        body.setTextAlignment(JXLabel.TextAlignment.CENTER);
         panel.add(body, gbc);
         gbc.ipady = 0;
 
@@ -303,13 +326,13 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 4;
         gbc.gridx = 0;
         JLabel pohorie = new JLabel("Pohorie");
-        pohorie.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //pohorie.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(pohorie, gbc);
 
         gbc.gridy = 5;
         gbc.gridx = 0;
         JLabel ro = new JLabel("Ročné obdobie");
-        ro.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //ro.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(ro, gbc);
 
         gbc.gridy = 5;
@@ -335,13 +358,13 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 4;
         gbc.gridx = 2;
         JLabel ciel = new JLabel("Cieľ");
-        ciel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //ciel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(ciel, gbc);
 
         gbc.gridy = 5;
         gbc.gridx = 2;
         JLabel level = new JLabel("Obtiažnosť");
-        level.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //level.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(level, gbc);
 
         gbc.gridy = 5;
@@ -355,7 +378,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
         JLabel off = new JLabel("Off track        ");
-        off.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //off.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(off, gbc);
 
         gbc.gridy = 5;
@@ -371,13 +394,13 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.BOTH;
         JLabel cas = new JLabel("Trvanie (hod.)");
         //cas.setHorizontalAlignment(SwingConstants.RIGHT);
-        cas.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //cas.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(cas, gbc);
 
         gbc.gridy = 5;
         gbc.gridx = 4;
         JLabel dlzka = new JLabel("Dĺžka (km)");
-        dlzka.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //dlzka.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         //dlzka.setHorizontalAlignment(SwingConstants.RIGHT);
         panel.add(dlzka, gbc);
 
@@ -416,7 +439,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 8;
         gbc.gridx = 0;
         JLabel popisTury = new JLabel("Popis túry");
-        popisTury.setBorder(BorderFactory.createLineBorder(Color.black));
+        //popisTury.setBorder(BorderFactory.createLineBorder(Color.black));
         panel.add(popisTury, gbc);
 
         gbc.gridx = 0;

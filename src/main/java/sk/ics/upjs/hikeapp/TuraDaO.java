@@ -28,4 +28,5 @@ public interface TuraDaO {
     public List<Image> dajFotky(long idT);
 
     public void pridajFotky(List<File> fotky);
+
 }

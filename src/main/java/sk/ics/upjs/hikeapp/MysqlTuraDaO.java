@@ -7,10 +7,13 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +22,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import org.springframework.asm.Type;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.SqlLobValue;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.jdbc.support.lob.LobHandler;
 
 public class MysqlTuraDaO implements TuraDaO {
 
@@ -102,7 +109,31 @@ public class MysqlTuraDaO implements TuraDaO {
 
     @Override
     public void pridajFotky(List<File> fotky) {
-        
+        List<Tura> t = tmp.query("select * from tura order by idT desc limit 0,1", new TuraMapper());
+        Long idT = t.get(0).getIdT();
+        System.out.println(idT);
+        InputStream imageIs = null;
+        for (File image : fotky) {
+            try {
+                //final File image = new File("C:\\puppy.jpg");
+                imageIs = new FileInputStream(image);
+                LobHandler lobHandler = new DefaultLobHandler();
+                tmp.update("insert into Fotky values(?,?,?,?)", new Object[]{
+                    null,
+                    idT,
+                    image.getName(),
+                    new SqlLobValue(imageIs, (int) image.length(), lobHandler)},
+                        new int[]{Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.BLOB});
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(MysqlTuraDaO.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    imageIs.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(MysqlTuraDaO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     public class FotkaMapper implements RowMapper {
@@ -113,12 +144,14 @@ public class MysqlTuraDaO implements TuraDaO {
             try {
                 InputStream stream = rs.getBinaryStream("fotka");
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                int a = stream.read();
-                while (a >= 0) {
-                    output.write((char) a);
-                    a = stream.read();
+                if (stream != null) {
+                    int a = stream.read();
+                    while (a >= 0) {
+                        output.write((char) a);
+                        a = stream.read();
+                    }
+                    image = Toolkit.getDefaultToolkit().createImage(output.toByteArray());
                 }
-                image = Toolkit.getDefaultToolkit().createImage(output.toByteArray());
             } catch (IOException ex) {
                 Logger.getLogger(MysqlTuraDaO.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -173,6 +206,7 @@ public class MysqlTuraDaO implements TuraDaO {
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             String popis = null;
             Tura t = new Tura();
+            t.setIdT(rs.getLong("idT"));
             t.setPohorie(rs.getString("Pohorie"));
             t.setRocneObdobie(rs.getString("RocneObdobie"));
             t.setObtiaznost(rs.getInt("Obtiaznost"));
@@ -200,6 +234,7 @@ public class MysqlTuraDaO implements TuraDaO {
                 ret.append(popis.charAt(i));
             }
         }
+        p.add(ret.toString());
         return p;
     }
 

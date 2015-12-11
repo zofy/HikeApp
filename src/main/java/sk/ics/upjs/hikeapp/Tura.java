@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 public class Tura {
 
+    private Long idT;
+
     private String pohorie;
 
     private int obtiaznost;
@@ -22,6 +24,14 @@ public class Tura {
     private boolean mimoChodnika;
 
     private String ciel;
+
+    public Long getIdT() {
+        return idT;
+    }
+
+    public void setIdT(Long idT) {
+        this.idT = idT;
+    }
 
     public LinkedList<String> getPopis() {
         return popis;
