@@ -7,8 +7,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +44,7 @@ import sk.ics.upjs.hikeapp.DaOFactory;
 import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
+import sk.ics.upjs.hikeapp.UzivatelDaO;
 
 public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
@@ -80,10 +84,26 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private StringBuilder chybovyVypis = new StringBuilder();
     private int pocitadloFotiek = 1;
 
+    private Long IdU;
+
     public VlozTuruForm() {
         initComponents();
-        inicializujSa();
 
+    }
+
+    public VlozTuruForm(Long userId) {
+        initComponents();
+        inicializujSa();
+        IdU = userId;
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                new UzivatelMenu(IdU).setVisible(true);
+                super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
     }
 
     @Override
@@ -149,6 +169,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
             }
 
             Tura t = new Tura();
+            t.setIdU(IdU);
             t.setPohorie(pohorieField.getText());
             t.setRocneObdobie(roField.getText());
             t.setObtiaznost((int) spin.getValue());
@@ -172,6 +193,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 tury.pridajFotky(fotky);
             }
             this.dispose();
+            new UzivatelMenu(IdU).setVisible(true);
         }
         if (e.getSource().equals(east)) {
             if (vypinac1) {

@@ -12,4 +12,6 @@ public interface UzivatelDaO {
 
     public boolean overMeno(String meno);
 
+    public boolean overUzivatela(String meno, String heslo);
+
 }

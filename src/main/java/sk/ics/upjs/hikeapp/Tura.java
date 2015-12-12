@@ -7,6 +7,8 @@ public class Tura {
 
     private Long idT;
 
+    private Long idU;
+
     private String pohorie;
 
     private int obtiaznost;
@@ -34,7 +36,6 @@ public class Tura {
     public Tura() {
         this.dlzka = 0;
     }
-    
 
     public void setPocetHodnoteni(Long pocetHodnoteni) {
         this.pocetHodnoteni = pocetHodnoteni;
@@ -50,6 +51,14 @@ public class Tura {
 
     public void setIdT(Long idT) {
         this.idT = idT;
+    }
+
+    public Long getIdU() {
+        return idU;
+    }
+
+    public void setIdU(Long idU) {
+        this.idU = idU;
     }
 
     public LinkedList<String> getPopis() {

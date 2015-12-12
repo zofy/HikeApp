@@ -28,8 +28,14 @@ public class UzivatelMysqlDaO implements UzivatelDaO {
 
     @Override
     public Long getUserId(String meno) {
-        Uzivatel u = (Uzivatel) tmp.query("select * from uzivatel where meno = ?", new Object[]{meno}, new UzivatelMapper());
-        return u.getId();
+        Long idU = null;
+        List<Uzivatel> uzivatel = tmp.query("select * from uzivatel where meno = ?", new Object[]{meno}, new UzivatelMapper());
+        for (Uzivatel u : uzivatel) {
+            if (u.getMeno().equals(meno)) {
+                idU = u.getId();
+            }
+        }
+        return idU;
     }
 
     @Override
@@ -41,6 +47,22 @@ public class UzivatelMysqlDaO implements UzivatelDaO {
     public boolean overMeno(String meno) {
         List<Uzivatel> list = tmp.query("select * from uzivatel where meno=?", new Object[]{meno}, new UzivatelMapper());
         return list.isEmpty();
+    }
+
+    @Override
+    public boolean overUzivatela(String meno, String heslo) {
+        List<Uzivatel> uzivatel = tmp.query("select * from uzivatel where meno=? and heslo=?",
+                new Object[]{meno, heslo}, new UzivatelMapper());
+        if (uzivatel.isEmpty()) {
+            return false;
+        } else {
+            for (Uzivatel u : uzivatel) {
+                if (u.getMeno().equals(meno) && u.getHeslo().equals(heslo)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public class UzivatelMapper implements RowMapper<Uzivatel> {

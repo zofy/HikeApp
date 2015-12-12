@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,63 +17,85 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.UzivatelDaO;
 
-public class LogInForm extends javax.swing.JFrame {
+public class LogInForm extends javax.swing.JFrame implements MouseListener {
 
     private JButton loginButton;
     private JButton registerButton;
     private JTextField menoTextField;
-    private JTextField hesloTextField;
+    private JPasswordField hesloTextField;
     private JLabel hostLabel;
-    private JFrame frame;
+    private UzivatelDaO uzivatel;
 
     public LogInForm() {
         initComponents();
-        frame = this;
         setTitle("Prihlásenie");
         loginButton = new JButton("Login");
         registerButton = new JButton("Registruj");
         menoTextField = new JTextField(11);
-        hesloTextField = new JTextField(11);
+        hesloTextField = new JPasswordField(11);
         hostLabel = new JLabel("<html><u>Hosť</u></html>");
-        pack();
+        uzivatel = DaOFactory.INSTANCE.getUser();
+
         JPanel content = new JPanel(new GridBagLayout());
         content.setBackground(Color.white);
         //content.setBorder(new EmptyBorder(20, 20, 20, 20));
         this.setContentPane(content);
         this.add(new LoginPane());
-        final Color farbaHostLabel = hostLabel.getForeground();
-        hostLabel.addMouseMotionListener(new MouseAdapter() {
+        hostLabel.addMouseListener(this);
+        loginButton.addMouseListener(this);
 
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                hostLabel.setForeground(Color.BLUE);
-                hostLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-
-        });
-        hostLabel.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                hostLabel.setForeground(farbaHostLabel);
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                frame.dispose();
-                new FilterTurForm().setVisible(true);
-            }
-
-        });
         pack();
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension dim = new Dimension(420, 340);
+        this.setMinimumSize(dim);
+        dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
-        //this.setLocationRelativeTo(null);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // zatial filter potom menu
+        if (e.getSource().equals(hostLabel)) {
+            this.dispose();
+            new FilterTurForm().setVisible(true);
+        }
+        if (e.getSource().equals(loginButton)) {
+            if (uzivatel.overUzivatela(menoTextField.getText(), hesloTextField.getText())) {
+                this.dispose();
+                new UzivatelMenu(uzivatel.getUserId(menoTextField.getText())).setVisible(true);
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        if (e.getSource().equals(hostLabel)) {
+            hostLabel.setForeground(Color.BLUE);
+            hostLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        if (e.getSource().equals(hostLabel)) {
+            hostLabel.setForeground(Color.BLACK);
+        }
     }
 
     public class LoginPane extends JPanel {
@@ -144,6 +167,16 @@ public class LogInForm extends javax.swing.JFrame {
             gbc.gridx = 3;
             gbc.anchor = GridBagConstraints.WEST;
             add(registerButton, gbc);
+
+            gbc.gridy++;
+            gbc.ipady = 10;
+            gbc.fill = GridBagConstraints.BOTH;
+            JLabel medzera = new JLabel();
+            add(medzera, gbc);
+
+            gbc.gridy--;
+            gbc.ipady = 0;
+            gbc.fill = GridBagConstraints.NONE;
 
             gbc.gridx = 4;
             gbc.anchor = GridBagConstraints.CENTER;

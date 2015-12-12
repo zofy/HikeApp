@@ -15,6 +15,8 @@ public interface TuraDaO {
 
     public List<Tura> dajVybraneTury(Stack<String> nazvyAtributov, Stack<String> hodnotyAtributov);
 
+    public List<Tura> dajTuryPozivatela(Long idU);
+
     public void vymaz(Tura tura);
 
     public List<String> dajZoznamPohori();

@@ -1,27 +1,47 @@
 package gui;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
+import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.Tura;
+import sk.ics.upjs.hikeapp.TuraDaO;
+import sk.ics.upjs.hikeapp.UzivatelDaO;
 
 public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
 
+    private TuraDaO tury;
+    private UzivatelDaO uzivatel;
+    private List<Tura> zoznamTur;
+    private Long IdUzivatela;
     private JLabel preListener = null; // lebo bude davata MouseListener len na JLabely
 
     public UzivatelMenu() {
         initComponents();
+    }
+
+    public UzivatelMenu(Long idU) {
+        initComponents();
+        tury = DaOFactory.INSTANCE.getTuraDaO();
+        uzivatel = DaOFactory.INSTANCE.getUser();
+        IdUzivatela = idU;
+        zoznamTur = tury.dajTuryPozivatela(idU);
 
         BufferedImage searchObrazok = null;
         BufferedImage addObrazok = null;
@@ -88,6 +108,8 @@ public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
 
         this.pack();
         this.setTitle("HikeApp");
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
     }
 
     /**
@@ -182,7 +204,18 @@ public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        if (preListener.equals(pridajLabel)) {
+            new VlozTuruForm(IdUzivatela).setVisible(true);
+            this.dispose();
+        }
+        if (preListener.equals(hladajLabel)) {
+            new FilterTurForm().setVisible(true);
+            this.dispose();
+        }
+        if (preListener.equals(mojeTuryLabel)) {
+            new MainForm(zoznamTur).setVisible(true);
+            this.dispose();
+        }
     }
 
     @Override
