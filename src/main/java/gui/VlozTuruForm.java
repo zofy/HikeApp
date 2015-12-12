@@ -157,10 +157,8 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 t.setDlzka(Double.parseDouble(dlzkaField.getText().trim().replaceAll(",", ".")));
             }
             // nastavit hodnotenie
-            System.out.println(sr.getSelection());
             t.setHodnotenie(sr.getSelection());
             t.setPocetHodnoteni(Long.valueOf(1));
-            System.out.println(t.getPocetHodnoteni());
             //
             t.setMimoChodnika(offTrackBox.isSelected());
             t.setCiel(cielField.getText());
