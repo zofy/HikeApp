@@ -150,7 +150,6 @@ public class TuraForm extends javax.swing.JFrame {
         int dlzka = 0;
         int pocetRiadkov = 0;
         for (String bod : bodyTury) {
-            System.out.println(bod);
             if (dlzka < 100) {
                 if (dlzka == 0) {
                     ret.append(bod);

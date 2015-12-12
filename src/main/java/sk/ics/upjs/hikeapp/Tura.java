@@ -25,6 +25,25 @@ public class Tura {
 
     private String ciel;
 
+    private String rocneObdobie;
+
+    private float hodnotenie;
+
+    private Long pocetHodnoteni;
+
+    public Tura() {
+        this.dlzka = 0;
+    }
+    
+
+    public void setPocetHodnoteni(Long pocetHodnoteni) {
+        this.pocetHodnoteni = pocetHodnoteni;
+    }
+
+    public Long getPocetHodnoteni() {
+        return pocetHodnoteni;
+    }
+
     public Long getIdT() {
         return idT;
     }
@@ -79,15 +98,11 @@ public class Tura {
                 + casovaNarocnost + " rocneObdobie: " + rocneObdobie + " hodnotenie: " + hodnotenie;
     }
 
-    private String rocneObdobie;
-
-    private double hodnotenie;
-
-    public void setHodnotenie(double hodnotenie) {
+    public void setHodnotenie(float hodnotenie) {
         this.hodnotenie = hodnotenie;
     }
 
-    public double getHodnotenie() {
+    public float getHodnotenie() {
         return hodnotenie;
     }
 

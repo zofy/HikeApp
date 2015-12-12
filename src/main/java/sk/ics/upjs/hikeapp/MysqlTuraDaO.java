@@ -212,7 +212,8 @@ public class MysqlTuraDaO implements TuraDaO {
             t.setObtiaznost(rs.getInt("Obtiaznost"));
             t.setCasovaNarocnost(rs.getDouble("CasovaNarocnost"));
             t.setDlzka(rs.getDouble("Dlzka"));
-            t.setHodnotenie(rs.getDouble("Hodnotenie"));
+            t.setHodnotenie(rs.getFloat("Hodnotenie"));
+            t.setPocetHodnoteni(rs.getLong("pocetHodnoteni"));
             t.setMimoChodnika(rs.getBoolean("MimoChodnik"));
             t.setCiel(rs.getString("ciel"));
             t.setNazov(rs.getString("Nazov"));
@@ -252,10 +253,14 @@ public class MysqlTuraDaO implements TuraDaO {
 
     @Override
     public void pridaj(Tura tura) {
-        String insert = "insert into tura values(?,?,?,?,?,?,?,?,?,?,?,?)";
-        tmp.update(insert, null, tura.getPohorie(), tura.getCiel(), tura.getRocneObdobie(), tura.getObtiaznost(),
-                tura.getCasovaNarocnost(), tura.getDlzka(), tura.isMimoChodnika(), tura.getHodnotenie(),
-                tura.getNazov(), spracujPopisDoStringu(tura.getPopis()), tura.getDetail());
+        String insert = "insert into tura values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        Object dlzka = null;
+        if (tura.getDlzka() != 0) {
+            dlzka = tura.getDlzka();
+        }
+        tmp.update(insert, null, tura.getNazov(), spracujPopisDoStringu(tura.getPopis()), tura.getPohorie(), tura.getCiel(),
+                tura.getCasovaNarocnost(), tura.getRocneObdobie(), tura.getObtiaznost(), tura.isMimoChodnika(),
+                dlzka, tura.getHodnotenie(), tura.getPocetHodnoteni(), tura.getDetail());
     }
 
     @Override
