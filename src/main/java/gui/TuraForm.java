@@ -29,11 +29,13 @@ import javax.swing.JTextArea;
 import komponenty.ScrollPaneSSCCE;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.FotkaDaO;
 import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 
 public class TuraForm extends javax.swing.JFrame {
-    
-    private MysqlTuraDaO tury;
+
+    private TuraDaO tury;
+    private FotkaDaO fotos;
     private JLabel fotkaLabel;
     private List<ImageIcon> zoznamPano;
     private List<ImageIcon> zoznam;
@@ -41,33 +43,34 @@ public class TuraForm extends javax.swing.JFrame {
     private JPanel panel;
     private ScrollPaneSSCCE s;
     private JTable fotkyTable;
-    
+
     public TuraForm() {
         initComponents();
     }
-    
+
     public TuraForm(long idT) {
         initComponents();
-        idT = 1;
-        tury = (MysqlTuraDaO) DaOFactory.INSTANCE.getTuraDaO();
+        //idT = 1;
+        tury = DaOFactory.INSTANCE.getTuraDaO();
+        fotos = DaOFactory.INSTANCE.getFotky();
         this.setTitle(tury.dajNazovTury(idT));
         fotkaLabel = new JLabel();
-        zoznamPano = spracujPano(tury.dajFotky(idT));
+        zoznamPano = spracujPano(fotos.dajFotkyDanejTury(idT));
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         BufferedImage logInObrazok1 = null;
-        
+
         try {
             logInObrazok1 = ImageIO.read(new File("C:\\logo\\mm.png"));
-            
+
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
         Image scaledObrazok1 = logInObrazok1.getScaledInstance(550,
                 240, Image.SCALE_SMOOTH);
-        
+
         fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
-        zoznam = this.spracujFotky(tury.dajFotky(idT));
+        zoznam = this.spracujFotky(fotos.dajFotkyDanejTury(idT));
         //
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -76,15 +79,15 @@ public class TuraForm extends javax.swing.JFrame {
         s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
         fotkyTable = s.getTable();
         fotkyTable.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(fotkyTable.getSelectedColumn());
                 TuraForm.this.zmenFotku(fotkyTable.getSelectedColumn());
             }
-            
+
         });
-        
+
         Dimension d = new Dimension(600, 130);
         s.setPreferredSize(d);
         s.setMaximumSize(d);
@@ -99,7 +102,7 @@ public class TuraForm extends javax.swing.JFrame {
         // Popis
         gbc.gridy++;
         popisLabel = new JLabel();
-        vypis(tury.spracujPopisDoListu(tury.dajPopis(idT)));
+        vypis(this.spracujPopisDoListu(tury.dajPopis(idT)));
         popisLabel.setFont(new Font("Serif", Font.BOLD, 12));
         popisLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(popisLabel, gbc);
@@ -112,13 +115,13 @@ public class TuraForm extends javax.swing.JFrame {
                 + "ewvgweveeeeeeeeeeeeeeeeeeeeee\n"
                 + "eeeeee");
         panel.add(detail, gbc);
-        
+
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.setContentPane(scrollPane);
     }
-    
+
     public List<ImageIcon> spracujFotky(List<Image> zoznamFotiek) {
         List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
         for (Image img : zoznamFotiek) {
@@ -128,7 +131,7 @@ public class TuraForm extends javax.swing.JFrame {
         }
         return upraveneFotky;
     }
-    
+
     public List<ImageIcon> spracujPano(List<Image> zoznamFotiek) {
         ImageIcon bimg = null;
         int height = 0;
@@ -144,7 +147,22 @@ public class TuraForm extends javax.swing.JFrame {
         }
         return upraveneFotky;
     }
-    
+
+    public LinkedList<String> spracujPopisDoListu(String popis) {
+        LinkedList<String> p = new LinkedList<String>();
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < popis.length(); i++) {
+            if (popis.charAt(i) == '-') {
+                p.add(ret.toString());
+                ret.delete(0, ret.length());
+            } else {
+                ret.append(popis.charAt(i));
+            }
+        }
+        p.add(ret.toString());
+        return p;
+    }
+
     public void vypis(LinkedList<String> bodyTury) {
         StringBuilder ret = new StringBuilder();
         int dlzka = 0;
@@ -167,7 +185,7 @@ public class TuraForm extends javax.swing.JFrame {
         popisLabel.setMinimumSize(d);
         popisLabel.setText(ret.toString());
     }
-    
+
     public void zmenFotku(int idx) {
         Dimension d = new Dimension(zoznamPano.get(idx).getIconWidth(), zoznamPano.get(idx).getIconHeight());
         fotkaLabel.setMinimumSize(d);

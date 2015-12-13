@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -110,6 +113,17 @@ public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
         this.setTitle("HikeApp");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
+
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                UzivatelMenu.this.dispose();
+                new LogInForm().setVisible(true);
+            }
+
+        });
     }
 
     /**

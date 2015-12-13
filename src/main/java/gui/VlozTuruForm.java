@@ -43,6 +43,7 @@ import komponenty.ImagePreview;
 import komponenty.StarRater;
 import org.jdesktop.swingx.JXLabel;
 import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.FotkaDaO;
 import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
@@ -73,6 +74,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private StarRater sr = new StarRater(5, 0, 0);
 
     private TuraDaO tury = DaOFactory.INSTANCE.getTuraDaO();
+    private FotkaDaO fotos = DaOFactory.INSTANCE.getFotky();
 
     private LinkedList<String> bodyTury = new LinkedList<String>();
     private StringBuilder ret = new StringBuilder();
@@ -201,7 +203,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
             tury.pridaj(t);
             // este pridat aj fotky
             if (!fotky.isEmpty()) {
-                tury.pridajFotky(fotky);
+                fotos.pridajFotky(fotky, tury.poslednaTuraUzivatela(IdU).getIdT());
             }
             this.dispose();
             new UzivatelMenu(IdU).setVisible(true);

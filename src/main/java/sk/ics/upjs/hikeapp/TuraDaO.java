@@ -27,8 +27,6 @@ public interface TuraDaO {
 
     public String dajNazovTury(long idT);
 
-    public List<Image> dajFotky(long idT);
-
-    public void pridajFotky(List<File> fotky);
+    public Tura poslednaTuraUzivatela(Long idU);
 
 }

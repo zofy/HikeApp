@@ -60,7 +60,7 @@ public class MainForm extends javax.swing.JFrame {
         initComponents();
     }
 
-    public MainForm(List<Tura> zoznamTur, Long userId) {
+    public MainForm(final List<Tura> zoznamTur, Long userId) {
         initComponents();
         this.setTitle("Hike");
         idU = userId;
@@ -115,7 +115,8 @@ public class MainForm extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 MainForm.this.dispose();
-                new TuraForm(turyList.getSelectedIndex()).setVisible(true);
+                Tura t = zoznamTur.get(turyList.getSelectedIndex());
+                new TuraForm(t.getIdT()).setVisible(true);
             }
 
             @Override

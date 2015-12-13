@@ -8,12 +8,15 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -136,8 +139,7 @@ public class RegistrujForm extends javax.swing.JFrame {
                 }
                 uzivatel.vlozUzivatela(u);
                 RegistrujForm.this.dispose();
-                // zatial 
-                new FilterTurForm().setVisible(true);
+                new UzivatelMenu(uzivatel.getUserId(meno)).setVisible(true);
             }
 
         });
@@ -145,6 +147,17 @@ public class RegistrujForm extends javax.swing.JFrame {
         dim = new Dimension(300, 250);
         this.setPreferredSize(dim);
         this.pack();
+
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                RegistrujForm.this.dispose();
+                new LogInForm().setVisible(true);
+            }
+
+        });
     }
 
     /**

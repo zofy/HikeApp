@@ -11,4 +11,8 @@ public enum DaOFactory {
     public UzivatelDaO getUser() {
         return new UzivatelMysqlDaO();
     }
+
+    public FotkaDaO getFotky() {
+        return new MysqlFotkaDaO();
+    }
 }
