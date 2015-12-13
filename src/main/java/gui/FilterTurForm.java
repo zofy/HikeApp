@@ -3,6 +3,8 @@ package gui;
 import gui.MainForm;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
@@ -10,17 +12,24 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.DaOFactory;
 
 public class FilterTurForm extends javax.swing.JFrame {
-
+    
     private TuraDaO tury;
     private MyButtonGroup obtiaznostButtonGroup;
-
+    private Long idU;
+    
     public FilterTurForm() {
         initComponents();
+    }
+
+    public FilterTurForm(Long userId) {
+        initComponents();
         this.setTitle("Výber túry");
+        idU = userId;
         // mame vlastny ButtonGroup , kt ma funkciu ze vrati ktory radioButton je zvoleny
         obtiaznostButtonGroup = new MyButtonGroup();
         obtiaznostButtonGroup.add(obtiaznostRadioButton1);
@@ -50,6 +59,18 @@ public class FilterTurForm extends javax.swing.JFrame {
         DefaultComboBoxModel modelRO = new DefaultComboBoxModel(zoznamROCB);
         rocneObdobieComboBox.setModel(modelRO);
 
+        // pri skonceni okna sa vrati do menu
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            
+            @Override
+            public void windowClosing(WindowEvent e) {
+                FilterTurForm.this.dispose();
+                new UzivatelMenu(idU).setVisible(true);
+            }
+            
+        });
+        
         pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int height = dim.height;
@@ -57,7 +78,7 @@ public class FilterTurForm extends javax.swing.JFrame {
         this.setLocation((-this.getSize().width + width) / 2, (-this.getSize().height + height) / 2);
         setVisible(true);
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -229,7 +250,7 @@ public class FilterTurForm extends javax.swing.JFrame {
     // Ked sa podari pridat ButtonGroup do Formu tak to potom pouzijeme ako obtiaznostBG.getSelectedValue();
 
     public class MyButtonGroup extends ButtonGroup {
-
+        
         public String getSelectedValue() {
             int i = 1;
             for (Enumeration<AbstractButton> buttons = this.getElements(); buttons.hasMoreElements();) {
@@ -244,7 +265,6 @@ public class FilterTurForm extends javax.swing.JFrame {
     }
 
     private void hladajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hladajButtonActionPerformed
-        this.setVisible(false);
         Stack<String> nazvyAtributov = new Stack<String>();
         Stack<String> hodnotyAtributov = new Stack<String>();
         if (!String.valueOf(pohorieComboBox.getSelectedItem()).equals("<Pohorie>")) {
@@ -267,8 +287,8 @@ public class FilterTurForm extends javax.swing.JFrame {
             nazvyAtributov.push("mimoChodnik");
             hodnotyAtributov.push("false");
         }
-        new MainForm(tury.dajVybraneTury(nazvyAtributov, hodnotyAtributov)).setVisible(true);
-        //this.dispose();
+        this.dispose();
+        new MainForm(tury.dajVybraneTury(nazvyAtributov, hodnotyAtributov),idU).setVisible(true);
 
     }//GEN-LAST:event_hladajButtonActionPerformed
 

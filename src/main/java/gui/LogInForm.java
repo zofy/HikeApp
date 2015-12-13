@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -50,6 +51,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
         this.add(new LoginPane());
         hostLabel.addMouseListener(this);
         loginButton.addMouseListener(this);
+        registerButton.addMouseListener(this);
 
         pack();
         Dimension dim = new Dimension(420, 340);
@@ -69,7 +71,13 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
             if (uzivatel.overUzivatela(menoTextField.getText(), hesloTextField.getText())) {
                 this.dispose();
                 new UzivatelMenu(uzivatel.getUserId(menoTextField.getText())).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Nesprávne meno alebo heslo!", "Chyba", JOptionPane.ERROR_MESSAGE);
             }
+        }
+        if (e.getSource().equals(registerButton)) {
+            this.dispose();
+            new RegistrujForm(menoTextField.getText(), hesloTextField.getText()).setVisible(true);
         }
     }
 

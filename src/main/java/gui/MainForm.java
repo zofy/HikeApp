@@ -17,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +37,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import komponenty.StarRater;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.DaOFactory;
@@ -46,18 +49,35 @@ public class MainForm extends javax.swing.JFrame {
     private ImageIcon img1;
     private ImageIcon img2;
     private ImageIcon img3;
+    private ImageIcon img4;
+    private ImageIcon img5;
     private int level;
     private String offTrack;
+    private Long idU;
+    private StarRater sr;
 
     public MainForm() {
         initComponents();
     }
 
-    public MainForm(List<Tura> zoznamTur) {
+    public MainForm(List<Tura> zoznamTur, Long userId) {
         initComponents();
         this.setTitle("Hike");
+        idU = userId;
+        sr = new StarRater(5, 0, 0);
+        sr.setVisible(true);
         this.setMinimumSize(new Dimension(500, 250));
         this.setPreferredSize(new Dimension(500, 250));
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                MainForm.this.dispose();
+                new UzivatelMenu(idU).setVisible(true);
+            }
+
+        });
         this.addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -112,28 +132,38 @@ public class MainForm extends javax.swing.JFrame {
         this.setLocation((-this.getSize().width + width) / 2, (-this.getSize().height + height) / 2);
 
         // nacitanie obrazkov
-        BufferedImage logInObrazok1 = null;
-        BufferedImage logInObrazok2 = null;
-        BufferedImage logInObrazok3 = null;
+        BufferedImage level1 = null;
+        BufferedImage level2 = null;
+        BufferedImage level3 = null;
+        BufferedImage level4 = null;
+        BufferedImage level5 = null;
 
         try {
-            logInObrazok1 = ImageIO.read(new File("C:\\logo\\lvl1.png"));
-            logInObrazok2 = ImageIO.read(new File("C:\\logo\\lvl2.png"));
-            logInObrazok3 = ImageIO.read(new File("C:\\logo\\lvl3.png"));
+            level1 = ImageIO.read(new File("C:\\logo\\lvl1.png"));
+            level2 = ImageIO.read(new File("C:\\logo\\lvl2.png"));
+            level3 = ImageIO.read(new File("C:\\logo\\lvl3.png"));
+            level4 = ImageIO.read(new File("C:\\logo\\lvl4.png"));
+            level5 = ImageIO.read(new File("C:\\logo\\lvl5.png"));
 
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
-        Image scaledObrazok1 = logInObrazok1.getScaledInstance(65,
+        Image scaledObrazok1 = level1.getScaledInstance(65,
                 50, Image.SCALE_SMOOTH);
-        Image scaledObrazok2 = logInObrazok2.getScaledInstance(65,
+        Image scaledObrazok2 = level2.getScaledInstance(65,
                 50, Image.SCALE_SMOOTH);
-        Image scaledObrazok3 = logInObrazok3.getScaledInstance(65,
+        Image scaledObrazok3 = level3.getScaledInstance(65,
+                50, Image.SCALE_SMOOTH);
+        Image scaledObrazok4 = level4.getScaledInstance(65,
+                50, Image.SCALE_SMOOTH);
+        Image scaledObrazok5 = level5.getScaledInstance(65,
                 50, Image.SCALE_SMOOTH);
         //l.setIcon(new ImageIcon(scaledObrazok));
         img1 = new ImageIcon(scaledObrazok1);
         img2 = new ImageIcon(scaledObrazok2);
         img3 = new ImageIcon(scaledObrazok3);
+        img4 = new ImageIcon(scaledObrazok4);
+        img5 = new ImageIcon(scaledObrazok5);
     }
 
     final class MyListCellRend implements ListCellRenderer<Tura> {
@@ -142,11 +172,12 @@ public class MainForm extends javax.swing.JFrame {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
-            JPanel label = new JPanel(new GridBagLayout());
-            label.setPreferredSize(new Dimension(450, 70));
-            label.setBackground(Color.white);
-            label.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.setLayout(new GridBagLayout());
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.setPreferredSize(new Dimension(450, 70));
+            panel.setBackground(Color.white);
+            panel.setBorder(BorderFactory.createLineBorder(Color.black));
+            panel.setLayout(new GridBagLayout());
+
             // nacitanie obrazku do labelu
             JLabel l = null;
             level = tura.getObtiaznost();
@@ -156,20 +187,19 @@ public class MainForm extends javax.swing.JFrame {
                 l = new JLabel(img2);
             } else if (level == 3) {
                 l = new JLabel(img3);
-            } else {
-                l = new JLabel(img3);
+            } else if (level == 4) {
+                l = new JLabel(img4);
+            } else if (level == 5) {
+                l = new JLabel(img5);
             }
             GridBagConstraints gbc = new GridBagConstraints();
 
             gbc.insets = new Insets(3, 3, 3, 3);
             gbc.gridx = 0;
             gbc.gridy = 0;
-            //gbc.ipadx = 50;
-            //gbc.ipady = 50;
             gbc.gridheight = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            panel.add(l, gbc);
 
             gbc.gridwidth = 1;
             gbc.gridheight = 1;
@@ -182,56 +212,65 @@ public class MainForm extends javax.swing.JFrame {
             l = new JLabel(tura.getPohorie());
             l.setMinimumSize(new Dimension(100, 30));
             l.setPreferredSize(new Dimension(100, 30));
-            l.setHorizontalAlignment(SwingConstants.RIGHT);
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            l.setHorizontalAlignment(SwingConstants.CENTER);
+            panel.add(l, gbc);
             gbc.gridy++;
             l = new JLabel(tura.getRocneObdobie());
             l.setMinimumSize(new Dimension(100, 30));
             l.setPreferredSize(new Dimension(100, 30));
-            l.setHorizontalAlignment(SwingConstants.RIGHT);
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            l.setHorizontalAlignment(SwingConstants.CENTER);
+            panel.add(l, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = 0;
             gbc.insets = new Insets(3, 5, 3, 3);
             l = new JLabel(tura.getCiel());
-            l.setMinimumSize(new Dimension(100, 30));
-            l.setPreferredSize(new Dimension(100, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            l.setMinimumSize(new Dimension(115, 30));
+            l.setPreferredSize(new Dimension(115, 30));
+            panel.add(l, gbc);
             gbc.gridy++;
-            l = new JLabel("hodnotenie: " + String.valueOf(tura.getHodnotenie()));
-            l.setMinimumSize(new Dimension(100, 30));
-            l.setPreferredSize(new Dimension(100, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+
+            //nastavenie StarRatera
+            sr.setRating(tura.getHodnotenie());
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.SOUTHWEST;
+            gbc.insets = new Insets(9, 3, 0, 3);
+            JLabel hodnotenieLabel = new JLabel("(" + String.valueOf(tura.getPocetHodnoteni()) + "x" + ")");
+            panel.add(sr, gbc);
+            gbc.anchor = GridBagConstraints.EAST;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.insets = new Insets(3, 3, 3, 3);
+            panel.add(hodnotenieLabel, gbc);
 
             gbc.gridx = 3;
             gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(3, 3, 3, 3);
             //gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 0.1;
             l = new JLabel(String.valueOf(tura.getCasovaNarocnost()) + " hod.");
             l.setMinimumSize(new Dimension(70, 30));
             l.setPreferredSize(new Dimension(70, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            l.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(l, gbc);
             gbc.gridy++;
-            l = new JLabel(String.valueOf(tura.getDlzka()) + " km");
+
+            if (tura.getDlzka() != 0) {
+                l = new JLabel(String.valueOf(tura.getDlzka()) + " km");
+            } else {
+                l = new JLabel("---" + " km");
+            }
+            l.setHorizontalAlignment(JLabel.CENTER);
             l.setMinimumSize(new Dimension(70, 30));
             l.setPreferredSize(new Dimension(70, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            panel.add(l, gbc);
 
             gbc.gridx = 4;
             gbc.gridy = 0;
             l = new JLabel("level: " + String.valueOf(tura.getObtiaznost()));
             l.setMinimumSize(new Dimension(70, 30));
             l.setPreferredSize(new Dimension(70, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            panel.add(l, gbc);
             gbc.gridy++;
             if (tura.isMimoChodnika()) {
                 offTrack = "<html>off track: <img src='file:C:\\logo\\yes.png'></html>";
@@ -241,8 +280,7 @@ public class MainForm extends javax.swing.JFrame {
             l = new JLabel(offTrack);
             l.setMinimumSize(new Dimension(70, 30));
             l.setPreferredSize(new Dimension(70, 30));
-            l.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.add(l, gbc);
+            panel.add(l, gbc);
 
             //delegat
             /*  JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
@@ -314,10 +352,9 @@ public class MainForm extends javax.swing.JFrame {
              table.setDefaultRenderer(Object.class, renderer);
              //table.getColumnModel().getColumn(0).setPreferredWidth(50);*/
             if (mouseOver == index && !isSelected) {
-                label.setForeground(Color.red);
-                label.setBackground(new Color(175, 238, 238));
+                panel.setBackground(Color.decode("#D7FFB8"));
             }
-            return label;
+            return panel;
         }
 
     }

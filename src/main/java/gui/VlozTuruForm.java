@@ -23,6 +23,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,6 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 import komponenty.FileChooser;
 import komponenty.ImageFileView;
@@ -95,12 +97,21 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         initComponents();
         inicializujSa();
         IdU = userId;
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+
             @Override
             public void windowClosing(WindowEvent e) {
+                VlozTuruForm.this.dispose();
                 new UzivatelMenu(IdU).setVisible(true);
-                super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
             }
+
+            /* @Override
+             public void windowClosing(WindowEvent e) {
+             super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
+             VlozTuruForm.this.dispose();
+             new UzivatelMenu(IdU).setVisible(true);
+             }*/
         });
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);

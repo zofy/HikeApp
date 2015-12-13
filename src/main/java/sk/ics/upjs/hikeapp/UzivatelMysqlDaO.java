@@ -46,7 +46,12 @@ public class UzivatelMysqlDaO implements UzivatelDaO {
     @Override
     public boolean overMeno(String meno) {
         List<Uzivatel> list = tmp.query("select * from uzivatel where meno=?", new Object[]{meno}, new UzivatelMapper());
-        return list.isEmpty();
+        for (Uzivatel u : list) {
+            if(u.getMeno().equals(meno)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
