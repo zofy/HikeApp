@@ -8,14 +8,11 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +21,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,7 +35,6 @@ import sk.ics.upjs.hikeapp.DaOFactory;
 import sk.ics.upjs.hikeapp.FotkaDaO;
 import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
-import static sun.misc.Version.println;
 
 public class TuraForm extends javax.swing.JFrame {
 
@@ -55,6 +50,7 @@ public class TuraForm extends javax.swing.JFrame {
     private long idU;
     private StarRater sr;
     private Tura tura;
+    private List<Double> okraje;
 
     public TuraForm() {
         initComponents();
@@ -66,6 +62,7 @@ public class TuraForm extends javax.swing.JFrame {
         fotos = DaOFactory.INSTANCE.getFotky();
         idU = userId;
         tura = tury.dajTuru(idT);
+        okraje = new LinkedList<Double>();
 
         this.setTitle(tura.getNazov());
         fotkaLabel = new JLabel();
@@ -96,7 +93,7 @@ public class TuraForm extends javax.swing.JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 5;
         panel.add(fotkaLabel, gbc);
         s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
         fotkyTable = s.getTable();
@@ -104,7 +101,6 @@ public class TuraForm extends javax.swing.JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                //System.out.println(fotkyTable.getSelectedColumn());
                 TuraForm.this.zmenFotku(fotkyTable.getSelectedColumn());
             }
 
@@ -117,12 +113,12 @@ public class TuraForm extends javax.swing.JFrame {
         // Fotky
         gbc.gridwidth = 3;
         gbc.gridheight = 1;
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 1;
         panel.add(s, gbc);
 
         // Pohorie
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -132,7 +128,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(pohorieLabel, gbc);
 
         // Ciel
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -142,7 +138,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(cielLabel, gbc);
 
         // Obtiaznost
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -152,7 +148,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(obtiaznostLabel, gbc);
 
         // Casova Narocnost
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -162,7 +158,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(casoNarocnostLabel, gbc);
 
         // Dlzka tury
-        gbc.gridx = 2;
+        gbc.gridx = 3;
         gbc.gridy = 5;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -178,7 +174,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(dlzkaLabel, gbc);
 
         // Popis
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 6;
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -192,7 +188,7 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(popisLabel, gbc);
         gbc.ipady = 0;
 
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 7;
         gbc.gridwidth = 1;
         JLabel popisTury = new JLabel("Popis:");
@@ -202,7 +198,7 @@ public class TuraForm extends javax.swing.JFrame {
         popisTury.setPreferredSize(d);
         panel.add(popisTury, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 7;
         JLabel medzera = new JLabel();
         d = new Dimension(250, 25);
@@ -212,18 +208,18 @@ public class TuraForm extends javax.swing.JFrame {
         panel.add(medzera, gbc);
 
         gbc.gridy = 7;
-        gbc.gridx = 2;
+        gbc.gridx = 3;
         JLabel hodnotenieLabel = new JLabel("Hodnotenie:");
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(hodnotenieLabel, gbc);
 
         gbc.gridy = 7;
-        gbc.gridx = 2;
+        gbc.gridx = 3;
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(sr, gbc);
 
         // Detail tury
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 8;
         gbc.gridwidth = 3;
         //gbc.fill = GridBagConstraints.BOTH;
@@ -232,6 +228,7 @@ public class TuraForm extends javax.swing.JFrame {
         JTextArea detail = new JTextArea(tury.dajDetail(idT));
         detail.setMinimumSize(d);
         detail.setPreferredSize(d);
+        detail.setMaximumSize(d);
         panel.add(detail, gbc);
 
         JScrollPane scrollPane = new JScrollPane(panel);
@@ -244,6 +241,9 @@ public class TuraForm extends javax.swing.JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
+                long pocetHodnoteni = tura.getPocetHodnoteni();
+                float rating = (tura.getHodnotenie() * pocetHodnoteni + sr.getSelection()) / (pocetHodnoteni + 1);
+                tury.ohodnotTuru(tura.getIdT(), rating, pocetHodnoteni + 1);
                 TuraForm.this.dispose();
                 if (idU > -1) {
                     new UzivatelMenu(idU).setVisible(true);
@@ -274,11 +274,10 @@ public class TuraForm extends javax.swing.JFrame {
         List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
         for (Image img : zoznamFotiek) {
             bimg = new ImageIcon(img);
-            /*height = (int) (bimg.getIconHeight() / (4));
-             width = bimg.getIconWidth() / 3;
-             */
+            /*            height = (int) (bimg.getIconHeight() / (4));
+             width = bimg.getIconWidth() / 3;*/
             width = 600;
-            height = 450;
+            height = 400;
             img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon(img);
             upraveneFotky.add(icon);
@@ -321,7 +320,6 @@ public class TuraForm extends javax.swing.JFrame {
                 dlzka = bod.length();
             }
         }
-        System.out.println(ret.toString());
         Dimension d = new Dimension(550, pocetRiadkov * 25);
         popisLabel.setMinimumSize(d);
         popisLabel.setPreferredSize(d);

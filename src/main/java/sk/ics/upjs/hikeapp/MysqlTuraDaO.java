@@ -121,6 +121,12 @@ public class MysqlTuraDaO implements TuraDaO {
         return list.get(0);
     }
 
+    @Override
+    public void ohodnotTuru(long idT, float rating, long pocetHodnoteni) {
+        tmp.update("update tura set hodnotenie=?, pocetHodnoteni=? where idT=?",
+                new Object[]{rating, pocetHodnoteni, idT});
+    }
+
     public class NazovMapper implements RowMapper {
 
         @Override

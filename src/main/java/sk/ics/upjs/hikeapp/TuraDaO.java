@@ -31,4 +31,6 @@ public interface TuraDaO {
 
     public Tura dajTuru(long idT);
 
+    public void ohodnotTuru(long idT, float rating, long pocetHodnoteni);
+
 }
