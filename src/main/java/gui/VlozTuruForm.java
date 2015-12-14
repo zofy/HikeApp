@@ -99,6 +99,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         initComponents();
         inicializujSa();
         IdU = userId;
+       
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
 
@@ -108,12 +109,6 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 new UzivatelMenu(IdU).setVisible(true);
             }
 
-            /* @Override
-             public void windowClosing(WindowEvent e) {
-             super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
-             VlozTuruForm.this.dispose();
-             new UzivatelMenu(IdU).setVisible(true);
-             }*/
         });
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
@@ -405,7 +400,6 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
         body.setFont(new Font("Calibri", Font.BOLD, 14));
-        body.setTextAlignment(JXLabel.TextAlignment.CENTER);
         body.setTextAlignment(JXLabel.TextAlignment.CENTER);
         panel.add(body, gbc);
         gbc.ipady = 0;

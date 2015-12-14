@@ -87,8 +87,8 @@ public class MysqlTuraDaO implements TuraDaO {
     }
 
     @Override
-    public Blob dajDetail(long idT) {
-        List<Blob> detail = tmp.query("select detail from tura where idT=?", new Object[]{idT}, new DetailMapper());
+    public String dajDetail(long idT) {
+        List<String> detail = tmp.query("select detail from tura where idT=?", new Object[]{idT}, new DetailMapper());
         if (!detail.isEmpty()) {
             return detail.get(0);
         } else {
@@ -115,6 +115,12 @@ public class MysqlTuraDaO implements TuraDaO {
         return t.get(0);
     }
 
+    @Override
+    public Tura dajTuru(long idT) {
+        List<Tura> list = tmp.query("select * from tura where idT=?", new Object[]{idT}, new TuraMapper());
+        return list.get(0);
+    }
+
     public class NazovMapper implements RowMapper {
 
         @Override
@@ -129,7 +135,7 @@ public class MysqlTuraDaO implements TuraDaO {
 
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
-            Blob detail = (Blob) rs.getBlob("detail");
+            String detail = rs.getString("detail");
             return detail;
         }
 

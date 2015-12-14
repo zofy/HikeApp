@@ -23,10 +23,12 @@ public interface TuraDaO {
 
     public String dajPopis(long idT);
 
-    public Blob dajDetail(long idT);
+    public String dajDetail(long idT);
 
     public String dajNazovTury(long idT);
 
     public Tura poslednaTuraUzivatela(Long idU);
+
+    public Tura dajTuru(long idT);
 
 }

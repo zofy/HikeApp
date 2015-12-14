@@ -65,7 +65,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
         // zatial filter potom menu
         if (e.getSource().equals(hostLabel)) {
             this.dispose();
-            new FilterTurForm().setVisible(true);
+            new HostMenu().setVisible(true);
         }
         if (e.getSource().equals(loginButton)) {
             if (uzivatel.overUzivatela(menoTextField.getText(), hesloTextField.getText())) {

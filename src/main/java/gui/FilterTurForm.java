@@ -66,7 +66,11 @@ public class FilterTurForm extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 FilterTurForm.this.dispose();
-                new UzivatelMenu(idU).setVisible(true);
+                if (idU > -1) {
+                    new UzivatelMenu(idU).setVisible(true);
+                } else {
+                    new HostMenu().setVisible(true);
+                }
             }
 
         });

@@ -74,7 +74,11 @@ public class MainForm extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 MainForm.this.dispose();
-                new UzivatelMenu(idU).setVisible(true);
+                if (idU > -1) {
+                    new UzivatelMenu(idU).setVisible(true);
+                } else {
+                    new HostMenu().setVisible(true);
+                }
             }
 
         });
@@ -116,7 +120,7 @@ public class MainForm extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 MainForm.this.dispose();
                 Tura t = zoznamTur.get(turyList.getSelectedIndex());
-                new TuraForm(t.getIdT()).setVisible(true);
+                new TuraForm(t.getIdT(), idU).setVisible(true);
             }
 
             @Override
@@ -155,9 +159,9 @@ public class MainForm extends javax.swing.JFrame {
                 50, Image.SCALE_SMOOTH);
         Image scaledObrazok3 = level3.getScaledInstance(65,
                 50, Image.SCALE_SMOOTH);
-        Image scaledObrazok4 = level4.getScaledInstance(65,
+        Image scaledObrazok4 = level4.getScaledInstance(50,
                 50, Image.SCALE_SMOOTH);
-        Image scaledObrazok5 = level5.getScaledInstance(65,
+        Image scaledObrazok5 = level5.getScaledInstance(50,
                 50, Image.SCALE_SMOOTH);
         //l.setIcon(new ImageIcon(scaledObrazok));
         img1 = new ImageIcon(scaledObrazok1);
