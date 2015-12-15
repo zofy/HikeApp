@@ -13,6 +13,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.DaOFactory;
 
@@ -69,7 +70,7 @@ public class FilterTurForm extends javax.swing.JFrame {
                 if (idU > -1) {
                     new UzivatelMenu(idU).setVisible(true);
                 } else {
-                    new HostMenu().setVisible(true);
+                    new LogInForm().setVisible(true);
                 }
             }
 
@@ -301,9 +302,13 @@ public class FilterTurForm extends javax.swing.JFrame {
             nazvyAtributov.push("obtiaznost");
             hodnotyAtributov.push(obtiaznostButtonGroup.getSelectedValue());
         }
-        if (!String.valueOf(casovaNarTextField.getText()).equals("")) {
+        if (!overPolicko(String.valueOf(casovaNarTextField.getText()).trim())) {
+            JOptionPane.showMessageDialog(this, "Zlý formát pre čas!");
+            return;
+        }
+        if (!String.valueOf(casovaNarTextField.getText()).trim().equals("")) {
             nazvyAtributov.push("casovaNarocnost");
-            hodnotyAtributov.push(String.valueOf(casovaNarTextField.getText()));
+            hodnotyAtributov.push(String.valueOf(casovaNarTextField.getText().trim().replace(",", ".")));
         }
         if (!mimoChodnikCheckBox.isSelected()) {
             nazvyAtributov.push("mimoChodnik");
@@ -318,6 +323,19 @@ public class FilterTurForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_hladajButtonActionPerformed
 
+    public boolean overPolicko(String text) {
+        String s = text.trim();
+        for (int i = 0; i < s.length(); i++) {
+            if ((int) s.charAt(i) > 57) {
+                return false;
+            } else if ((int) s.charAt(i) < 48) {
+                if ((int) s.charAt(i) != 46 && (int) s.charAt(i) != 44) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     private void obtiaznostRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_obtiaznostRadioButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_obtiaznostRadioButton2ActionPerformed

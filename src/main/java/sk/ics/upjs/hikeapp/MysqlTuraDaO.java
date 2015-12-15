@@ -127,6 +127,20 @@ public class MysqlTuraDaO implements TuraDaO {
                 new Object[]{rating, pocetHodnoteni, idT});
     }
 
+    @Override
+    public void upravTuru(Tura tura) {
+        Object dlzka = null;
+        if (tura.getDlzka() != 0) {
+            dlzka = tura.getDlzka();
+        }
+        tmp.update("update tura set nazov=?, popis=?, pohorie=?, ciel=?, "
+                + "casovaNarocnost=?, rocneObdobie=?, obtiaznost=?, mimoChodnik=?, dlzka=?,"
+                + "hodnotenie=?, pocetHodnoteni=?, detail=? where idT=?", tura.getNazov(),
+                spracujPopisDoStringu(tura.getPopis()), tura.getPohorie(), tura.getCiel(),
+                tura.getCasovaNarocnost(), tura.getRocneObdobie(), tura.getObtiaznost(), tura.isMimoChodnika(),
+                dlzka, tura.getHodnotenie(), tura.getPocetHodnoteni(), tura.getDetail(), tura.getIdT());
+    }
+
     public class NazovMapper implements RowMapper {
 
         @Override
@@ -237,8 +251,8 @@ public class MysqlTuraDaO implements TuraDaO {
     }
 
     @Override
-    public void vymaz(Tura tura) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void vymazTuru(Tura tura) {
+        tmp.update("delete from tura where idT=?", new Object[]{tura.getIdT()});
     }
 
 }

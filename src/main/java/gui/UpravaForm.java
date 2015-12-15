@@ -73,6 +73,7 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
     private JButton upravButton = new JButton("Uprav");
     private JButton vymazFotkuButton = new JButton("Zmaž fotku");
     private JButton vymazTuruButton = new JButton("Vymaž túru");
+    private JButton pridajFotkyButton = new JButton("Pridaj fotky");
     private FileChooser fc = new FileChooser();
     private List<File> fotky = new LinkedList<File>();
     private StarRater sr = new StarRater(5, 0, 0);
@@ -107,6 +108,9 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
 
     public UpravaForm(long userId, long idTury) {
         initComponents();
+        Dimension frameSize = new Dimension(450, 300);
+        this.setMinimumSize(frameSize);
+        this.setPreferredSize(frameSize);
         IdU = userId;
         idT = idTury;
         turaNaUpravu = tury.dajTuru(idT);
@@ -117,13 +121,14 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         fotkyTable = new ScrollPaneSSCCE(zoznamObrazkov);
         zoznamFotiek = (ArrayList<Fotka>) fotos.dajAtributyFotkyDanejTury(idT);
 
-        setFotky(zoznamObrazkov);
-
+        fotkyTable = new ScrollPaneSSCCE(zoznamObrazkov);
+        table = fotkyTable.getTable();
         table.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 idxFotkyNaMazanie = table.getSelectedColumn();
+                System.out.println(idxFotkyNaMazanie);
             }
 
         });
@@ -144,15 +149,35 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
     }
 
-    public void setFotky(List<ImageIcon> fotky) {
-        fotkyTable = new ScrollPaneSSCCE((ArrayList<ImageIcon>) fotky);
-        table = fotkyTable.getTable();
-        fotkyTable.repaint();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(pridajFotkyButton)) {
+            fc.addChoosableFileFilter(new ImageFilter());
+            fc.setAcceptAllFileFilterUsed(false);
 
+            //Add custom icons for file types.
+            fc.setFileView(new ImageFileView());
+
+            //Add the preview pane.
+            fc.setAccessory(new ImagePreview(fc));
+            fc.setMultiSelectionEnabled(true);
+            int returnVal = fc.showDialog(UpravaForm.this, "Vlož");
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File[] obrazky = fc.getSelectedFiles();
+                for (File obr : obrazky) {
+                    fotky.add(obr);
+                    fotkyArea.append(pocitadloFotiek + ".) " + obr.getName()
+                            + "." + "\n");
+                    pocitadloFotiek++;
+                }
+            }
+
+            fotkyArea.setCaretPosition(fotkyArea.getDocument().getLength());
+
+            //Reset the file chooser for the next time it's shown.
+            fc.setSelectedFile(null);
+        }
         if (e.getSource().equals(upravButton)) {
             if (nazovField.getText().trim().isEmpty()) {
                 chybovyVypis.append("Zadaj názov túry!\n");
@@ -186,30 +211,31 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
                 return;
             }
 
-            Tura t = new Tura();
-            t.setIdU(IdU);
-            t.setPohorie(pohorieField.getText());
-            t.setRocneObdobie(roField.getText());
-            t.setObtiaznost((int) spin.getValue());
-            t.setCasovaNarocnost(Double.parseDouble(casField.getText().trim().replaceAll(",", ".")));
+            turaNaUpravu.setPohorie(pohorieField.getText());
+            turaNaUpravu.setRocneObdobie(roField.getText());
+            turaNaUpravu.setObtiaznost((int) spin.getValue());
+            turaNaUpravu.setCasovaNarocnost(Double.parseDouble(casField.getText().trim().replaceAll(",", ".")));
             if (!dlzkaField.getText().isEmpty()) {
-                t.setDlzka(Double.parseDouble(dlzkaField.getText().trim().replaceAll(",", ".")));
+                turaNaUpravu.setDlzka(Double.parseDouble(dlzkaField.getText().trim().replaceAll(",", ".")));
             }
             // nastavit hodnotenie
-            t.setHodnotenie(sr.getSelection());
-            t.setPocetHodnoteni(Long.valueOf(1));
+            if (sr.getSelection() > 0) {
+                turaNaUpravu.setHodnotenie(sr.getSelection());
+                turaNaUpravu.setPocetHodnoteni(turaNaUpravu.getPocetHodnoteni() + 1);
+            }
             //
-            t.setMimoChodnika(offTrackBox.isSelected());
-            t.setCiel(cielField.getText());
-            t.setNazov(nazovField.getText());
-            t.setPopis(bodyTury);
-            t.setDetail(popis.getText());
+            turaNaUpravu.setMimoChodnika(offTrackBox.isSelected());
+            turaNaUpravu.setCiel(cielField.getText());
+            turaNaUpravu.setNazov(nazovField.getText());
+            turaNaUpravu.setPopis(bodyTury);
+            turaNaUpravu.setDetail(popis.getText());
 
-            tury.pridaj(t);
+            tury.upravTuru(turaNaUpravu);
             // este pridat aj fotky
             if (!fotky.isEmpty()) {
-                fotos.pridajFotky(fotky, tury.poslednaTuraUzivatela(IdU).getIdT());
+                fotos.pridajFotky(fotky, turaNaUpravu.getIdT());
             }
+
             this.dispose();
             new UzivatelMenu(IdU).setVisible(true);
         }
@@ -267,16 +293,17 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
                 idx--;
                 bodyTuryField.setText(bodyTury.get(idx + 1));
                 vypis(bodyTury);
-                //System.out.println(idx + 1);
             }
         }
         if (e.getSource().equals(vymazFotkuButton)) {
             fotos.vymazFotku(idT, zoznamFotiek.get(idxFotkyNaMazanie).getId());
-            zoznamObrazkov.remove(idxFotkyNaMazanie);
-            setFotky(zoznamObrazkov);
+            table.getModel().setValueAt(null, 0, idxFotkyNaMazanie);
+            table.repaint();
         }
         if (e.getSource().equals(vymazTuruButton)) {
-            
+            tury.vymazTuru(turaNaUpravu);
+            this.dispose();
+            new UzivatelMenu(IdU).setVisible(true);
         }
     }
 
@@ -325,6 +352,7 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         upravButton.addActionListener(this);
         vymazFotkuButton.addActionListener(this);
         vymazTuruButton.addActionListener(this);
+        pridajFotkyButton.addActionListener(this);
         fotkyArea.setEditable(false);
         body.setLineWrap(true);
         JScrollPane scrollFotkyArea = new JScrollPane(fotkyArea);
@@ -476,6 +504,21 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         JLabel ciel = new JLabel("Cieľ");
         //ciel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(ciel, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panel.add(pridajFotkyButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 2;
+        //gbc.ipady = 40;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel.add(scrollFotkyArea, gbc);
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.ipady = 0;
 
         gbc.gridy = 6;
         gbc.gridx = 2;

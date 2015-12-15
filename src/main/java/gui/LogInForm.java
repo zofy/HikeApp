@@ -33,6 +33,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
     private JPasswordField hesloTextField;
     private JLabel hostLabel;
     private UzivatelDaO uzivatel;
+    private long hostConstant = -1;
 
     public LogInForm() {
         initComponents();
@@ -65,7 +66,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
         // zatial filter potom menu
         if (e.getSource().equals(hostLabel)) {
             this.dispose();
-            new HostMenu().setVisible(true);
+            new FilterTurForm(hostConstant).setVisible(true);
         }
         if (e.getSource().equals(loginButton)) {
             if (uzivatel.overUzivatela(menoTextField.getText().trim(), hesloTextField.getText().trim())) {

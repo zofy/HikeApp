@@ -17,7 +17,7 @@ public interface TuraDaO {
 
     public List<Tura> dajTuryPozivatela(Long idU);
 
-    public void vymaz(Tura tura);
+    public void vymazTuru(Tura tura);
 
     public List<String> dajZoznamPohori();
 
@@ -32,5 +32,7 @@ public interface TuraDaO {
     public Tura dajTuru(long idT);
 
     public void ohodnotTuru(long idT, float rating, long pocetHodnoteni);
+
+    public void upravTuru(Tura tura);
 
 }

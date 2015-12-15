@@ -5,9 +5,9 @@ import java.util.LinkedList;
 
 public class Tura {
 
-    private Long idT;
+    private long idT;
 
-    private Long idU;
+    private long idU;
 
     private String pohorie;
 
@@ -31,33 +31,33 @@ public class Tura {
 
     private float hodnotenie;
 
-    private Long pocetHodnoteni;
+    private long pocetHodnoteni;
 
     public Tura() {
         this.dlzka = 0;
     }
 
-    public void setPocetHodnoteni(Long pocetHodnoteni) {
+    public void setPocetHodnoteni(long pocetHodnoteni) {
         this.pocetHodnoteni = pocetHodnoteni;
     }
 
-    public Long getPocetHodnoteni() {
+    public long getPocetHodnoteni() {
         return pocetHodnoteni;
     }
 
-    public Long getIdT() {
+    public long getIdT() {
         return idT;
     }
 
-    public void setIdT(Long idT) {
+    public void setIdT(long idT) {
         this.idT = idT;
     }
 
-    public Long getIdU() {
+    public long getIdU() {
         return idU;
     }
 
-    public void setIdU(Long idU) {
+    public void setIdU(long idU) {
         this.idU = idU;
     }
 

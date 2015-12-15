@@ -250,7 +250,7 @@ public class TuraForm extends javax.swing.JFrame {
                 if (idU > -1) {
                     new UzivatelMenu(idU).setVisible(true);
                 } else {
-                    new HostMenu().setVisible(true);
+                    new FilterTurForm(idU).setVisible(true);
                 }
             }
 

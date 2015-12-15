@@ -33,6 +33,7 @@ public class ScrollPaneSSCCE extends JPanel{
         turaForm = new TuraForm();
         setLayout(new BorderLayout());
         table = new JTable(1, zoznamFotiek.size());
+        table.setFillsViewportHeight(true);
        
         class ImageRenderer extends DefaultTableCellRenderer {
 
@@ -42,6 +43,11 @@ public class ScrollPaneSSCCE extends JPanel{
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int column) {
                 lbl.setIcon((Icon) value);
+                if(table.getSelectedColumn() == column){
+                    lbl.setBorder(BorderFactory.createLineBorder(Color.yellow,2));
+                }else{
+                    lbl.setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+                }
                 return lbl;
             }
         }
@@ -54,6 +60,7 @@ public class ScrollPaneSSCCE extends JPanel{
             }
 
         };
+        model.fireTableDataChanged();
         table.setDefaultRenderer(Object.class, new ImageRenderer());
         table.setModel(model);
         for (int i = 0; i < zoznamFotiek.size(); i++) {
