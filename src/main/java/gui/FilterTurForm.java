@@ -314,7 +314,7 @@ public class FilterTurForm extends javax.swing.JFrame {
             hodnotyAtributov.push(cielField.getText().trim());
         }
         this.dispose();
-        new MainForm(tury.dajVybraneTury(nazvyAtributov, hodnotyAtributov), idU).setVisible(true);
+        new MainForm(tury.dajVybraneTury(nazvyAtributov, hodnotyAtributov), idU, -1).setVisible(true);
 
     }//GEN-LAST:event_hladajButtonActionPerformed
 

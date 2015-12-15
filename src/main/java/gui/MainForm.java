@@ -53,17 +53,20 @@ public class MainForm extends javax.swing.JFrame {
     private ImageIcon img5;
     private int level;
     private String offTrack;
-    private Long idU;
+    private long idU;
+    // rozlisuje ci idem turu prezerat alebo upravovat
+    private int rozlisovacka;
     private StarRater sr;
 
     public MainForm() {
         initComponents();
     }
 
-    public MainForm(final List<Tura> zoznamTur, Long userId) {
+    public MainForm(final List<Tura> zoznamTur, long userId, int rozlisenie) {
         initComponents();
-        this.setTitle("Hike");
+        this.setTitle("Zoznam túr");
         idU = userId;
+        rozlisovacka = rozlisenie;
         sr = new StarRater(5, 0, 0);
         sr.setVisible(true);
         this.setMinimumSize(new Dimension(500, 250));
@@ -120,7 +123,11 @@ public class MainForm extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 MainForm.this.dispose();
                 Tura t = zoznamTur.get(turyList.getSelectedIndex());
-                new TuraForm(t.getIdT(), idU).setVisible(true);
+                if (rozlisovacka > -1) {
+                    new UpravaForm(idU, t.getIdT()).setVisible(true);
+                } else {
+                    new TuraForm(t.getIdT(), idU).setVisible(true);
+                }
             }
 
             @Override

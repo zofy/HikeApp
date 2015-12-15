@@ -242,8 +242,10 @@ public class TuraForm extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 long pocetHodnoteni = tura.getPocetHodnoteni();
-                float rating = (tura.getHodnotenie() * pocetHodnoteni + sr.getSelection()) / (pocetHodnoteni + 1);
-                tury.ohodnotTuru(tura.getIdT(), rating, pocetHodnoteni + 1);
+                if (sr.getSelection() > 0) {
+                    float rating = (tura.getHodnotenie() * pocetHodnoteni + sr.getSelection()) / (pocetHodnoteni + 1);
+                    tury.ohodnotTuru(tura.getIdT(), rating, pocetHodnoteni + 1);
+                }
                 TuraForm.this.dispose();
                 if (idU > -1) {
                     new UzivatelMenu(idU).setVisible(true);

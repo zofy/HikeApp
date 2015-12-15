@@ -33,14 +33,7 @@ public class ScrollPaneSSCCE extends JPanel{
         turaForm = new TuraForm();
         setLayout(new BorderLayout());
         table = new JTable(1, zoznamFotiek.size());
-        this.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("hhhhh");
-            }
-
-        });
+       
         class ImageRenderer extends DefaultTableCellRenderer {
 
             JLabel lbl = new JLabel();

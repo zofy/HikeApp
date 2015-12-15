@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -57,8 +58,6 @@ public class HostMenu extends javax.swing.JFrame implements MouseListener {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
 
-        this.pack();
-
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
 
@@ -69,6 +68,7 @@ public class HostMenu extends javax.swing.JFrame implements MouseListener {
             }
 
         });
+        //this.pack();
     }
 
     /**
@@ -85,17 +85,19 @@ public class HostMenu extends javax.swing.JFrame implements MouseListener {
         obrazokLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setForeground(java.awt.Color.white);
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         hladajLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        getContentPane().add(hladajLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 85, 70));
+        getContentPane().add(hladajLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 85, 70));
 
         inspirujLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        getContentPane().add(inspirujLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 140, 85, 70));
+        getContentPane().add(inspirujLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 85, 70));
 
-        obrazokLabel.setIcon(new javax.swing.ImageIcon("C:\\naMenu\\menu1.jpg")); // NOI18N
-        getContentPane().add(obrazokLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 530, 330));
+        obrazokLabel.setIcon(new javax.swing.ImageIcon("C:\\Users\\Patrik\\Desktop\\touristic1.png")); // NOI18N
+        getContentPane().add(obrazokLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 240, 230));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

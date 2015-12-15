@@ -22,9 +22,9 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 
 public class MysqlFotkaDaO implements FotkaDaO {
-
+    
     private JdbcTemplate tmp;
-
+    
     public MysqlFotkaDaO() {
         MysqlDataSource ds = new MysqlDataSource();
         ds.setURL("jdbc:mysql://localhost/hike");
@@ -33,16 +33,15 @@ public class MysqlFotkaDaO implements FotkaDaO {
         tmp = new JdbcTemplate();
         tmp.setDataSource(ds);
     }
-
+    
     @Override
-    public List<Image> dajFotkyDanejTury(Long idT) {
+    public List<Image> dajFotkyDanejTury(long idT) {
         String sql = "select fotka from fotky where idT=?";
         return tmp.query(sql, new Object[]{idT}, new FotkaMapper());
     }
-
+    
     @Override
-    public void pridajFotky(List<File> fotky, Long idT) {
-        System.out.println(idT);
+    public void pridajFotky(List<File> fotky, long idT) {
         InputStream imageIs = null;
         for (File image : fotky) {
             try {
@@ -65,14 +64,38 @@ public class MysqlFotkaDaO implements FotkaDaO {
             }
         }
     }
-
+    
     @Override
-    public List<Image> dajFotkyUzivatela(Long idU) {
+    public List<Image> dajFotkyUzivatela(long idU) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    @Override
+    public List<Fotka> dajAtributyFotkyDanejTury(long idT) {
+        return tmp.query("select id,idT, nazovFotky from fotky where idT=?",
+                new Object[]{idT}, new AtributyMapper());
+    }
+    
+    @Override
+    public void vymazFotku(long idT, long idFotky) {
+        tmp.update("delete from fotky where id=? and idT=?", new Object[]{idFotky, idT});
+    }
+    
+    public class AtributyMapper implements RowMapper {
+        
+        @Override
+        public Object mapRow(ResultSet rs, int i) throws SQLException {
+            Fotka f = new Fotka();
+            f.setId(rs.getLong("id"));
+            f.setIdT(rs.getLong("idT"));
+            f.setNazov(rs.getString("nazovFotky"));
+            return f;
+        }
+        
+    }
+    
     public class FotkaMapper implements RowMapper {
-
+        
         @Override
         public Object mapRow(ResultSet rs, int i) throws SQLException {
             Image image = null;
@@ -92,7 +115,7 @@ public class MysqlFotkaDaO implements FotkaDaO {
             }
             return image;
         }
-
+        
     }
-
+    
 }

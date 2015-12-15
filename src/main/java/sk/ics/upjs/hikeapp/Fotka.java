@@ -1,18 +1,40 @@
 package sk.ics.upjs.hikeapp;
 
+import java.awt.Image;
+
 public class Fotka {
 
-    private Long idT;
+    private long id;
 
-    private Long idU;
+    private long idT;
+
+    private long idU;
 
     private String nazov;
 
-    public Long getIdT() {
+    private Image obrazok;
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setObrazok(Image obrazok) {
+        this.obrazok = obrazok;
+    }
+
+    public Image getObrazok() {
+        return obrazok;
+    }
+
+    public long getIdT() {
         return idT;
     }
 
-    public Long getIdU() {
+    public long getIdU() {
         return idU;
     }
 

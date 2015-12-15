@@ -10,11 +10,14 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -29,27 +32,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 import komponenty.FileChooser;
 import komponenty.ImageFileView;
 import komponenty.ImageFilter;
 import komponenty.ImagePreview;
+import komponenty.ScrollPaneSSCCE;
 import komponenty.StarRater;
 import org.jdesktop.swingx.JXLabel;
 import sk.ics.upjs.hikeapp.DaOFactory;
+import sk.ics.upjs.hikeapp.Fotka;
 import sk.ics.upjs.hikeapp.FotkaDaO;
-import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
 import sk.ics.upjs.hikeapp.TuraDaO;
-import sk.ics.upjs.hikeapp.UzivatelDaO;
 
-public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
+public class UpravaForm extends javax.swing.JFrame implements ActionListener {
 
     private JTextField nazovField = new JTextField();
     private JTextField bodyTuryField = new JTextField();
@@ -64,11 +66,13 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private BasicArrowButton west = new BasicArrowButton(BasicArrowButton.WEST);
     private JTextArea popis = new JTextArea();
     private JLabel fotkaLabel = new JLabel();
+    private ScrollPaneSSCCE fotkyTable;
     private SpinnerModel sm = new SpinnerNumberModel(1, 1, 5, 1);
     private JSpinner spin = new JSpinner(sm);
     private JTextArea fotkyArea = new JTextArea(5, 10);
-    private JButton pridajFotky = new JButton("Pridaj fotky");
-    private JButton submit = new JButton("Pridaj");
+    private JButton upravButton = new JButton("Uprav");
+    private JButton vymazFotkuButton = new JButton("Zmaž fotku");
+    private JButton vymazTuruButton = new JButton("Vymaž túru");
     private FileChooser fc = new FileChooser();
     private List<File> fotky = new LinkedList<File>();
     private StarRater sr = new StarRater(5, 0, 0);
@@ -79,7 +83,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private LinkedList<String> bodyTury = new LinkedList<String>();
     private StringBuilder ret = new StringBuilder();
 
-    private int idx = -1;
+    private int idx;
     private String bod;
     private boolean vypinac1 = false;
     private boolean vypinac2 = true;
@@ -88,24 +92,50 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
     private StringBuilder chybovyVypis = new StringBuilder();
     private int pocitadloFotiek = 1;
 
-    private Long IdU;
+    private long IdU;
+    private long idT;
+    private Tura turaNaUpravu;
+    private JTable table;
+    private int idxFotkyNaMazanie;
+    private ArrayList<Fotka> zoznamFotiek;
+    private ArrayList<ImageIcon> zoznamObrazkov;
 
-    public VlozTuruForm() {
+    public UpravaForm() {
         initComponents();
 
     }
 
-    public VlozTuruForm(Long userId) {
+    public UpravaForm(long userId, long idTury) {
         initComponents();
-        inicializujSa();
         IdU = userId;
+        idT = idTury;
+        turaNaUpravu = tury.dajTuru(idT);
+        bodyTury = turaNaUpravu.getPopis();
+        vypis(bodyTury);
+        idx = bodyTury.size() - 1;
+        zoznamObrazkov = (ArrayList<ImageIcon>) spracujFotky(fotos.dajFotkyDanejTury(idT));
+        fotkyTable = new ScrollPaneSSCCE(zoznamObrazkov);
+        zoznamFotiek = (ArrayList<Fotka>) fotos.dajAtributyFotkyDanejTury(idT);
+
+        setFotky(zoznamObrazkov);
+
+        table.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                idxFotkyNaMazanie = table.getSelectedColumn();
+            }
+
+        });
+
+        inicializujSa();
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                VlozTuruForm.this.dispose();
+                UpravaForm.this.dispose();
                 new UzivatelMenu(IdU).setVisible(true);
             }
 
@@ -114,36 +144,16 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
     }
 
+    public void setFotky(List<ImageIcon> fotky) {
+        fotkyTable = new ScrollPaneSSCCE((ArrayList<ImageIcon>) fotky);
+        table = fotkyTable.getTable();
+        fotkyTable.repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(pridajFotky)) {
-            fc.addChoosableFileFilter(new ImageFilter());
-            fc.setAcceptAllFileFilterUsed(false);
 
-            //Add custom icons for file types.
-            fc.setFileView(new ImageFileView());
-
-            //Add the preview pane.
-            fc.setAccessory(new ImagePreview(fc));
-            fc.setMultiSelectionEnabled(true);
-            int returnVal = fc.showDialog(VlozTuruForm.this, "Vlož");
-
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File[] obrazky = fc.getSelectedFiles();
-                for (File obr : obrazky) {
-                    fotky.add(obr);
-                    fotkyArea.append(pocitadloFotiek + ".) " + obr.getName()
-                            + "." + "\n");
-                    pocitadloFotiek++;
-                }
-            }
-
-            fotkyArea.setCaretPosition(fotkyArea.getDocument().getLength());
-
-            //Reset the file chooser for the next time it's shown.
-            fc.setSelectedFile(null);
-        }
-        if (e.getSource().equals(submit)) {
+        if (e.getSource().equals(upravButton)) {
             if (nazovField.getText().trim().isEmpty()) {
                 chybovyVypis.append("Zadaj názov túry!\n");
             }
@@ -186,13 +196,8 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 t.setDlzka(Double.parseDouble(dlzkaField.getText().trim().replaceAll(",", ".")));
             }
             // nastavit hodnotenie
-            if (sr.getSelection() > 0) {
-                t.setHodnotenie(sr.getSelection());
-                t.setPocetHodnoteni(Long.valueOf(1));
-            } else {
-                t.setHodnotenie(0);
-                t.setPocetHodnoteni(Long.valueOf(0));
-            }
+            t.setHodnotenie(sr.getSelection());
+            t.setPocetHodnoteni(Long.valueOf(1));
             //
             t.setMimoChodnika(offTrackBox.isSelected());
             t.setCiel(cielField.getText());
@@ -265,6 +270,14 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 //System.out.println(idx + 1);
             }
         }
+        if (e.getSource().equals(vymazFotkuButton)) {
+            fotos.vymazFotku(idT, zoznamFotiek.get(idxFotkyNaMazanie).getId());
+            zoznamObrazkov.remove(idxFotkyNaMazanie);
+            setFotky(zoznamObrazkov);
+        }
+        if (e.getSource().equals(vymazTuruButton)) {
+            
+        }
     }
 
     public boolean overPolicko(String text) {
@@ -309,8 +322,9 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
     public void inicializujSa() {
         setTitle("Nová túra");
-        submit.addActionListener(this);
-        pridajFotky.addActionListener(this);
+        upravButton.addActionListener(this);
+        vymazFotkuButton.addActionListener(this);
+        vymazTuruButton.addActionListener(this);
         fotkyArea.setEditable(false);
         body.setLineWrap(true);
         JScrollPane scrollFotkyArea = new JScrollPane(fotkyArea);
@@ -336,7 +350,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
-        Image scaledObrazok1 = logInObrazok1.getScaledInstance(550,
+        Image scaledObrazok1 = logInObrazok1.getScaledInstance(600,
                 240, Image.SCALE_SMOOTH);
 
         fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
@@ -346,10 +360,20 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridwidth = 6;
         //fotkaLabel.setBorder(BorderFactory.createLineBorder(Color.black));
         panel.add(fotkaLabel, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        d = new Dimension(600, 130);
+        fotkyTable.setPreferredSize(d);
+        panel.add(fotkyTable, gbc);
+
         gbc.gridwidth = 1;
+        gbc.gridx = 5;
+        gbc.gridy = 2;
+        panel.add(vymazFotkuButton, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         d = new Dimension(100, 25);
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel nazov = new JLabel("Názov túry");
@@ -364,11 +388,12 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         panel.add(bodyTury, gbc);
 
         gbc.gridwidth = 2;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridx = 2;
         gbc.ipadx = 20;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
+        nazovField.setText(turaNaUpravu.getNazov());
         panel.add(nazovField, gbc);
         gbc.gridy++;
         gbc.insets = new Insets(3, 3, 3, 1);
@@ -379,13 +404,13 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridwidth = 1;
 
         gbc.fill = GridBagConstraints.NONE;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(west, gbc);
         west.addActionListener(this);
 
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridx = 3;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(3, 0, 3, 3);
@@ -395,7 +420,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(3, 3, 3, 3);
 
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridx = 1;
         gbc.ipady = 50;
         //d.setSize(350, 150);
@@ -411,57 +436,61 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
         gbc.gridwidth = 1;
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 0;
         JLabel pohorie = new JLabel("Pohorie");
         //pohorie.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(pohorie, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 0;
         JLabel ro = new JLabel("Ročné obdobie");
         //ro.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(ro, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 1;
         d.setSize(100, 25);
+        roField.setText(turaNaUpravu.getRocneObdobie());
         roField.setPreferredSize(d);
         panel.add(roField, gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 1;
         d.setSize(100, 25);
         pohorieField.setPreferredSize(d);
+        pohorieField.setText(turaNaUpravu.getPohorie());
         panel.add(pohorieField, gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 3;
         gbc.ipadx = 30;
         d.setSize(115, 25);
         cielField.setPreferredSize(d);
+        cielField.setText(turaNaUpravu.getCiel());
         panel.add(cielField, gbc);
         gbc.ipadx = 0;
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 2;
         JLabel ciel = new JLabel("Cieľ");
         //ciel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(ciel, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 2;
         JLabel level = new JLabel("Obtiažnosť");
         //level.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(level, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
+        spin.setValue(turaNaUpravu.getObtiaznost());
         panel.add(spin, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
@@ -469,13 +498,14 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         //off.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(off, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
+        offTrackBox.setSelected(turaNaUpravu.isMimoChodnika());
         panel.add(offTrackBox, gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 4;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.ipadx = 10;
@@ -485,7 +515,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         //cas.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(cas, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 4;
         JLabel dlzka = new JLabel("Dĺžka (km)");
         //dlzka.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -493,7 +523,7 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         panel.add(dlzka, gbc);
 
         gbc.ipadx = 20;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 5;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
@@ -501,64 +531,60 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         d = new Dimension(15, 24);
         casField.setMaximumSize(d);
         casField.setPreferredSize(d);
+        casField.setText(String.valueOf(turaNaUpravu.getCasovaNarocnost()));
         panel.add(casField, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 5;
         gbc.fill = GridBagConstraints.NONE;
         dlzkaField = new JTextField();
         dlzkaField.setMaximumSize(d);
         dlzkaField.setPreferredSize(d);
+        if (turaNaUpravu.getDlzka() != 0) {
+            dlzkaField.setText(String.valueOf(turaNaUpravu.getDlzka()));
+        }
         panel.add(dlzkaField, gbc);
         gbc.ipadx = 0;
 
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        panel.add(pridajFotky, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 6;
-        gbc.gridwidth = 2;
-        gbc.gridheight = 2;
-        //gbc.ipady = 40;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel.add(scrollFotkyArea, gbc);
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.ipady = 0;
-
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridx = 0;
         JLabel popisTuryLabel = new JLabel("Popis túry");
         //popisTury.setBorder(BorderFactory.createLineBorder(Color.black));
         panel.add(popisTuryLabel, gbc);
 
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridx = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
         JLabel hodnotenieLabel = new JLabel("Hodnotenie:");
         panel.add(hodnotenieLabel, gbc);
 
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridx = 4;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.WEST;
+        sr.setRating(turaNaUpravu.getHodnotenie());
         panel.add(sr, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.gridwidth = 6;
-        d = new Dimension(550, 300);
+        d = new Dimension(600, 300);
         popis.setPreferredSize(d);
+        popis.setText(turaNaUpravu.getDetail());
         panel.add(popis, gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 5;
-        gbc.gridy = 10;
-        panel.add(submit, gbc);
+        gbc.gridy = 11;
+        panel.add(upravButton, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 11;
+        panel.add(vymazTuruButton, gbc);
 
         JScrollPane scroll = new JScrollPane(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -566,6 +592,16 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
 
         this.setContentPane(scroll);
 
+    }
+
+    public List<ImageIcon> spracujFotky(List<Image> zoznamFotiek) {
+        List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
+        for (Image img : zoznamFotiek) {
+            img = img.getScaledInstance(200, 120, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(img);
+            upraveneFotky.add(icon);
+        }
+        return upraveneFotky;
     }
 
     /**
@@ -583,11 +619,11 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 538, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -610,21 +646,20 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VlozTuruForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpravaForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VlozTuruForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpravaForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VlozTuruForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpravaForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VlozTuruForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpravaForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VlozTuruForm().setVisible(true);
-
+                new UpravaForm().setVisible(true);
             }
         });
     }

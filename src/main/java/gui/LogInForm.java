@@ -68,7 +68,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
             new HostMenu().setVisible(true);
         }
         if (e.getSource().equals(loginButton)) {
-            if (uzivatel.overUzivatela(menoTextField.getText(), hesloTextField.getText())) {
+            if (uzivatel.overUzivatela(menoTextField.getText().trim(), hesloTextField.getText().trim())) {
                 this.dispose();
                 new UzivatelMenu(uzivatel.getUserId(menoTextField.getText())).setVisible(true);
             } else {

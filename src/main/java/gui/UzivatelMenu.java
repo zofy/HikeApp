@@ -227,7 +227,11 @@ public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
             this.dispose();
         }
         if (preListener.equals(mojeTuryLabel)) {
-            new MainForm(zoznamTur, IdUzivatela).setVisible(true);
+            new MainForm(zoznamTur, IdUzivatela, -1).setVisible(true);
+            this.dispose();
+        }
+        if (preListener.equals(upravLabel)) {
+            new MainForm(zoznamTur, IdUzivatela, 0).setVisible(true);
             this.dispose();
         }
     }
