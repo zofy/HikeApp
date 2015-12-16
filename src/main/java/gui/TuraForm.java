@@ -33,7 +33,6 @@ import org.jdesktop.swingx.JXLabel;
 import sk.ics.upjs.hikeapp.TuraDaO;
 import sk.ics.upjs.hikeapp.DaOFactory;
 import sk.ics.upjs.hikeapp.FotkaDaO;
-import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
 
 public class TuraForm extends javax.swing.JFrame {
@@ -59,10 +58,9 @@ public class TuraForm extends javax.swing.JFrame {
     public TuraForm(long idT, long userId) {
         initComponents();
         tury = DaOFactory.INSTANCE.getTuraDaO();
-        fotos = DaOFactory.INSTANCE.getFotky();
+        fotos = DaOFactory.INSTANCE.getFotkaDaO();
         idU = userId;
         tura = tury.dajTuru(idT);
-        okraje = new LinkedList<Double>();
         
         this.setTitle(tura.getNazov());
         fotkaLabel = new JLabel();
@@ -89,8 +87,7 @@ public class TuraForm extends javax.swing.JFrame {
         //
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(3, 3, 3, 3);
-        //gbc.fill = GridBagConstraints.BOTH;
-
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 5;
@@ -124,7 +121,6 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel pohorieLabel = new JLabel(tura.getPohorie());
         pohorieLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-        //pohorieLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(pohorieLabel, gbc);
 
         // Ciel
@@ -134,7 +130,6 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel cielLabel = new JLabel(tura.getCiel());
         cielLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-        //cielLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(cielLabel, gbc);
 
         // Obtiaznost
@@ -144,7 +139,6 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel obtiaznostLabel = new JLabel("Obtiažnosť: " + tura.getObtiaznost());
         obtiaznostLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-        //obtiaznostLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(obtiaznostLabel, gbc);
 
         // Casova Narocnost
@@ -154,7 +148,6 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         JLabel casoNarocnostLabel = new JLabel("Časová náročnosť: " + tura.getCasovaNarocnost() + " hod.");
         casoNarocnostLabel.setFont(new Font("Calibri", Font.BOLD, 14));
-        //casoNarocnostLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(casoNarocnostLabel, gbc);
 
         // Dlzka tury
@@ -170,7 +163,6 @@ public class TuraForm extends javax.swing.JFrame {
         }
         JLabel dlzkaLabel = new JLabel(dlzka);
         dlzkaLabel.setFont(new Font("Calibri", Font.BOLD, 14));
-        //dlzkaLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(dlzkaLabel, gbc);
 
         // Popis
@@ -192,7 +184,6 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.gridy = 7;
         gbc.gridwidth = 1;
         JLabel popisTury = new JLabel("Popis:");
-        //popisTury.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         d = new Dimension(175, 25);
         popisTury.setMinimumSize(d);
         popisTury.setPreferredSize(d);
@@ -204,7 +195,6 @@ public class TuraForm extends javax.swing.JFrame {
         d = new Dimension(250, 25);
         medzera.setMinimumSize(d);
         medzera.setPreferredSize(d);
-        //medzera.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(medzera, gbc);
         
         gbc.gridy = 7;
@@ -222,11 +212,11 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.gridx = 1;
         gbc.gridy = 8;
         gbc.gridwidth = 3;
-        //gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.CENTER;
         d = new Dimension(600, 300);
         JTextArea detail = new JTextArea(tury.dajDetail(idT));
         detail.setEditable(false);
+        detail.setLineWrap(true);
         JScrollPane scrollPopis = new JScrollPane(detail);
         scrollPopis.setPreferredSize(d);
         scrollPopis.setMaximumSize(d);

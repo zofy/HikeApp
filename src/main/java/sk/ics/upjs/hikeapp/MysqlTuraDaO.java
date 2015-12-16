@@ -48,7 +48,6 @@ public class MysqlTuraDaO implements TuraDaO {
         return tmp.query("Select distinct pohorie from tura", new PohorieMapper());
     }
 
-    // zatial je metoda tu: na spracovanie vyberu tur
     public String spracujVyberTur(Stack<String> zoznamAtributov) {
         StringBuilder buff = new StringBuilder();
         buff.append("select * from tura");

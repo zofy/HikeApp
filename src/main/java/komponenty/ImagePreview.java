@@ -30,7 +30,7 @@ public class ImagePreview extends JComponent
         if (tmpIcon != null) {
             if (tmpIcon.getIconWidth() > 90) {
                 thumbnail = new ImageIcon(tmpIcon.getImage().
-                        getScaledInstance(200, 100,
+                        getScaledInstance(130, 90,
                                 Image.SCALE_DEFAULT));
             } else { //no need to miniaturize
                 thumbnail = tmpIcon;

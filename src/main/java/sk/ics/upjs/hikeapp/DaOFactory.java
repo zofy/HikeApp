@@ -8,11 +8,11 @@ public enum DaOFactory {
         return new MysqlTuraDaO();
     }
 
-    public UzivatelDaO getUser() {
+    public UzivatelDaO getUserDaO() {
         return new UzivatelMysqlDaO();
     }
 
-    public FotkaDaO getFotky() {
+    public FotkaDaO getFotkaDaO() {
         return new MysqlFotkaDaO();
     }
 }

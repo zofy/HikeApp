@@ -42,7 +42,7 @@ public class UzivatelMenu extends javax.swing.JFrame implements MouseListener {
     public UzivatelMenu(Long idU) {
         initComponents();
         tury = DaOFactory.INSTANCE.getTuraDaO();
-        uzivatel = DaOFactory.INSTANCE.getUser();
+        uzivatel = DaOFactory.INSTANCE.getUserDaO();
         IdUzivatela = idU;
         zoznamTur = tury.dajTuryPozivatela(idU);
 

@@ -5,15 +5,6 @@ public class Uzivatel {
     private Long id;
     private String meno;
     private String heslo;
-    private String rola;
-
-    public void setRola(String rola) {
-        this.rola = rola;
-    }
-
-    public String getRola() {
-        return rola;
-    }
 
     public void setId(Long id) {
         this.id = id;

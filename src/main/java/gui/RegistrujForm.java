@@ -32,7 +32,7 @@ public class RegistrujForm extends javax.swing.JFrame {
     private JPasswordField heslo2Field = new JPasswordField();
     private JButton registerButton = new JButton("Registruj");
     private JLabel obrazokLabel = new JLabel();
-    private UzivatelDaO uzivatel = DaOFactory.INSTANCE.getUser();
+    private UzivatelDaO uzivatel = DaOFactory.INSTANCE.getUserDaO();
 
     public RegistrujForm() {
         initComponents();

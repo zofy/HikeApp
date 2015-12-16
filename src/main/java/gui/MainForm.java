@@ -57,13 +57,15 @@ public class MainForm extends javax.swing.JFrame {
     // rozlisuje ci idem turu prezerat alebo upravovat
     private int rozlisovacka;
     private StarRater sr;
+    private List<Tura> z;
 
     public MainForm() {
         initComponents();
     }
 
-    public MainForm(final List<Tura> zoznamTur, long userId, int rozlisenie) {
+    public MainForm(List<Tura> zoznamTur, long userId, int rozlisenie) {
         initComponents();
+        z = zoznamTur;
         this.setTitle("Zoznam túr");
         idU = userId;
         rozlisovacka = rozlisenie;
@@ -101,14 +103,10 @@ public class MainForm extends javax.swing.JFrame {
             }
 
         });
-        //this.setResizable(false);
         tury = DaOFactory.INSTANCE.getTuraDaO();
         turyList.setCellRenderer(new MyListCellRend());
-        //turyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         turyList.setListData(zoznamTur.toArray());
         turyList.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));;
-        //this.pack();
-        //this.setVisible(true);
         turyList.addMouseMotionListener(new MouseMotionAdapter() {
 
             @Override
@@ -122,7 +120,7 @@ public class MainForm extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 MainForm.this.dispose();
-                Tura t = zoznamTur.get(turyList.getSelectedIndex());
+                Tura t = z.get(turyList.getSelectedIndex());
                 if (rozlisovacka > -1) {
                     new UpravaForm(idU, t.getIdT()).setVisible(true);
                 } else {
@@ -170,7 +168,6 @@ public class MainForm extends javax.swing.JFrame {
                 50, Image.SCALE_SMOOTH);
         Image scaledObrazok5 = level5.getScaledInstance(50,
                 50, Image.SCALE_SMOOTH);
-        //l.setIcon(new ImageIcon(scaledObrazok));
         img1 = new ImageIcon(scaledObrazok1);
         img2 = new ImageIcon(scaledObrazok2);
         img3 = new ImageIcon(scaledObrazok3);
@@ -180,8 +177,7 @@ public class MainForm extends javax.swing.JFrame {
 
     final class MyListCellRend implements ListCellRenderer<Tura> {
 
-        DefaultListCellRenderer dcr = new DefaultListCellRenderer();
-
+        //DefaultListCellRenderer dcr = new DefaultListCellRenderer();
         @Override
         public Component getListCellRendererComponent(JList<? extends Tura> list, Tura tura, int index, boolean isSelected, boolean cellHasFocus) {
             JPanel panel = new JPanel(new GridBagLayout());
@@ -215,12 +211,9 @@ public class MainForm extends javax.swing.JFrame {
 
             gbc.gridwidth = 1;
             gbc.gridheight = 1;
-            //gbc.anchor = GridBagConstraints.CENTER;
 
             gbc.gridx = 1;
             gbc.gridy = 0;
-            //gbc.fill = GridBagConstraints.HORIZONTAL;
-            //gbc.ipady = 5;
             l = new JLabel(tura.getPohorie());
             l.setMinimumSize(new Dimension(100, 30));
             l.setPreferredSize(new Dimension(100, 30));
@@ -258,7 +251,6 @@ public class MainForm extends javax.swing.JFrame {
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(3, 3, 3, 3);
-            //gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 0.1;
             l = new JLabel(String.valueOf(tura.getCasovaNarocnost()) + " hod.");
             l.setMinimumSize(new Dimension(70, 30));
@@ -294,75 +286,6 @@ public class MainForm extends javax.swing.JFrame {
             l.setPreferredSize(new Dimension(70, 30));
             panel.add(l, gbc);
 
-            //delegat
-            /*  JLabel label = (JLabel) dcr.getListCellRendererComponent(list, tura, index, isSelected, cellHasFocus);
-             // Nastavit na labeli GridLayout a potom vlozit text aj star rating
-            
-             //format textu v JLabel
-             String html = "<html><table>\n"
-             + "<tr>"
-             + "<td rowspan='2'><img src=%s></td>"
-             + "<td style=width:80px align='left'>%s</td><td align='left'>%s hod.</td><td style=width:75px align='left'>%s km</td><td align='center'>level: %s</td>"
-             + "</tr>\n"
-             + "<tr><td align='center'>%s</td><td align='left'>hodnotenie: %s</td><td align='left'>off track: <img src=%s></td></tr>\n"
-             + "</table></html>";
-             String mimoChodnik;
-             if (tura.isMimoChodnika()) {
-             mimoChodnik = "file:C:\\yes.png";
-             } else {
-             mimoChodnik = "file:C:\\no.png";
-             }
-             String levelLogo = "file:C:\\logo.jpg";
-             label.setText(String.format(html, levelLogo, tura.getPohorie(),
-             tura.getCasovaNarocnost(), tura.getDlzka(), tura.getObtiaznost(), tura.getRocneObdobie(),
-             tura.getHodnotenie(), mimoChodnik));*/
-
-            /*DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
-            
-             public Component getTableCellRendererComponent(JTable table, Object value,
-             boolean isSelected, boolean hasFocus, int row, int column) {
-             if (row == 1) {
-             if (column == 0) {
-             setHorizontalAlignment(SwingConstants.RIGHT);
-             } else if (column == 3) {
-             setHorizontalAlignment(SwingConstants.CENTER);
-             } else {
-             setHorizontalAlignment(SwingConstants.CENTER);
-             }
-             setVerticalAlignment(SwingConstants.NORTH);
-             } else if (row == 0) {
-             if (column == 0) {
-             setHorizontalAlignment(SwingConstants.LEFT);
-             } else {
-             setHorizontalAlignment(SwingConstants.CENTER);
-             }
-             }
-             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-             }
-             };
-             JXTable table = new JXTable(2, 5);
-             table.setShowGrid(false);
-             table.setTableHeader(null);
-             table.setBackground(Color.white);
-             table.setValueAt("<html><img src='file:C:\\logo.jpg'></html>", 0, 0);
-             table.setValueAt(tura.getPohorie(), 0, 1);
-             table.setValueAt(tura.getCiel(), 0, 2);
-             table.setValueAt(tura.getCasovaNarocnost() + " hod.", 0, 3);
-             table.setValueAt("level:  " + tura.getObtiaznost(), 0, 4);
-             table.setValueAt(tura.getRocneObdobie(), 1, 1);
-             table.setValueAt("hodnotenie: " + tura.getHodnotenie(), 1, 2);
-             table.setValueAt(tura.getDlzka() + " km", 1, 3);
-             String offTrack;
-             if (tura.isMimoChodnika()) {
-             offTrack = "<html>off track: <img src='file:C:\\yes.png'></html>";
-             } else {
-             offTrack = "<html>off track: <img src='file:C:\\no.png'></html>";
-             }
-             table.setValueAt(offTrack, 1, 4);
-             table.setRowHeight(30);
-             table.getColumnModel().getColumn(3).setPreferredWidth(40);
-             table.setDefaultRenderer(Object.class, renderer);
-             //table.getColumnModel().getColumn(0).setPreferredWidth(50);*/
             if (mouseOver == index && !isSelected) {
                 panel.setBackground(Color.decode("#D7FFB8"));
             }

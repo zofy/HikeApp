@@ -6,10 +6,6 @@ import javax.swing.filechooser.*;
 
 public class ImageFileView extends FileView {
 
-    /*ImageIcon jpgIcon = Utils.createImageIcon("images/jpgIcon.gif");
-     ImageIcon gifIcon = Utils.createImageIcon("images/gifIcon.gif");
-     ImageIcon tiffIcon = Utils.createImageIcon("images/tiffIcon.gif");
-     ImageIcon pngIcon = Utils.createImageIcon("images/pngIcon.png");*/
     public String getName(File f) {
         return null; //let the L&F FileView figure this out
     }
@@ -21,6 +17,7 @@ public class ImageFileView extends FileView {
     public Boolean isTraversable(File f) {
         return null; //let the L&F FileView figure this out
     }
+
     public String getTypeDescription(File f) {
         String extension = Utils.getExtension(f);
         String type = null;
@@ -58,7 +55,7 @@ public class ImageFileView extends FileView {
                 icon = Utils.createImageIcon(f.getPath());
             }
         }
-       
+
         return icon;
     }
 }

@@ -43,7 +43,7 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
         menoTextField = new JTextField(11);
         hesloTextField = new JPasswordField(11);
         hostLabel = new JLabel("<html><u>Hosť</u></html>");
-        uzivatel = DaOFactory.INSTANCE.getUser();
+        uzivatel = DaOFactory.INSTANCE.getUserDaO();
 
         JPanel content = new JPanel(new GridBagLayout());
         content.setBackground(Color.white);
@@ -63,7 +63,6 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // zatial filter potom menu
         if (e.getSource().equals(hostLabel)) {
             this.dispose();
             new FilterTurForm(hostConstant).setVisible(true);
@@ -111,7 +110,6 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
 
         public LoginPane() {
             setLayout(new GridBagLayout());
-            //setBorder(new TitledBorder("Login"));
             setBackground(Color.white);
 
             BufferedImage logInObrazok = null;
@@ -122,17 +120,13 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
             }
             Image scaledObrazok = logInObrazok.getScaledInstance(350,
                     220, Image.SCALE_SMOOTH);
-            //l.setIcon(new ImageIcon(scaledObrazok));
             ImageIcon img = new ImageIcon(scaledObrazok);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
-            //gbc.ipadx = 350;
-            //gbc.ipady = 220;
             gbc.gridwidth = 5;
             JLabel l = new JLabel(img);
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
             add(l, gbc);
 
             // vynulovat
@@ -144,7 +138,6 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
             gbc.gridy = 1;
             gbc.ipadx = 80;
             l = new JLabel();
-            //l.setBorder(BorderFactory.createLineBorder(Color.black));
             add(l, gbc);
             // vynulovat
             gbc.ipadx = 0;
@@ -159,7 +152,6 @@ public class LogInForm extends javax.swing.JFrame implements MouseListener {
             gbc.gridx = 2;
             gbc.gridy = 1;
             gbc.gridwidth = 3;
-            //gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 1;
             add(menoTextField, gbc);
             gbc.gridy++;
