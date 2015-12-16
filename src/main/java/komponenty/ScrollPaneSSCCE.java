@@ -20,45 +20,47 @@ import javax.swing.plaf.basic.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class ScrollPaneSSCCE extends JPanel{
-
+public class ScrollPaneSSCCE extends JPanel {
+    
     private JTable table;
-
+    
     public JTable getTable() {
         return table;
     }
     private TuraForm turaForm;
-
+    
     public ScrollPaneSSCCE(ArrayList<ImageIcon> zoznamFotiek) {
         turaForm = new TuraForm();
         setLayout(new BorderLayout());
         table = new JTable(1, zoznamFotiek.size());
         table.setFillsViewportHeight(true);
-       
+        
         class ImageRenderer extends DefaultTableCellRenderer {
-
+            
             JLabel lbl = new JLabel();
-
+            
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int column) {
+                lbl.setHorizontalAlignment(JLabel.CENTER);
+                lbl.setVerticalAlignment(JLabel.CENTER);
                 lbl.setIcon((Icon) value);
-                if(table.getSelectedColumn() == column){
-                    lbl.setBorder(BorderFactory.createLineBorder(Color.yellow,2));
-                }else{
-                    lbl.setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+                if (table.getSelectedColumn() == column) {
+                    lbl.setBorder(BorderFactory.createLineBorder(Color.yellow, 2));
+                } else {
+                    lbl.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
                 }
                 return lbl;
             }
         }
-
+        
         DefaultTableModel model = new DefaultTableModel(1, zoznamFotiek.size()) {
-
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-
+            
         };
         model.fireTableDataChanged();
         table.setDefaultRenderer(Object.class, new ImageRenderer());
@@ -67,7 +69,7 @@ public class ScrollPaneSSCCE extends JPanel{
             model.setValueAt(zoznamFotiek.get(i), 0, i);
             table.getColumnModel().getColumn(i).setPreferredWidth(200);
         }
-
+        
         table.setShowGrid(false);
         table.setTableHeader(null);
         table.setRowHeight(120);
@@ -100,19 +102,19 @@ public class ScrollPaneSSCCE extends JPanel{
         //add(scrollPane);
 
         JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
-
+        
         BasicArrowButton west = new BasicArrowButton(BasicArrowButton.WEST);
-
+        
         west.setAction(
                 new ActionMapAction("", horizontal, "negativeUnitIncrement"));
         add(west, BorderLayout.WEST);
-
+        
         BasicArrowButton east = new BasicArrowButton(BasicArrowButton.EAST);
-
+        
         east.setAction(
                 new ActionMapAction("", horizontal, "positiveUnitIncrement"));
         add(east, BorderLayout.EAST);
         add(scrollPane);
     }
-
+    
 }

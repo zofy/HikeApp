@@ -101,6 +101,8 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
     private ArrayList<Fotka> zoznamFotiek;
     private ArrayList<ImageIcon> zoznamObrazkov;
 
+    private ImageIcon poVymazaniIcon;
+
     public UpravaForm() {
         initComponents();
 
@@ -108,9 +110,6 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
 
     public UpravaForm(long userId, long idTury) {
         initComponents();
-        Dimension frameSize = new Dimension(450, 300);
-        this.setMinimumSize(frameSize);
-        this.setPreferredSize(frameSize);
         IdU = userId;
         idT = idTury;
         turaNaUpravu = tury.dajTuru(idT);
@@ -147,6 +146,7 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         });
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - this.getSize().width) / 2, (dim.height - this.getSize().height) / 2);
+        this.getContentPane().setSize(850, 650);
     }
 
     @Override
@@ -297,7 +297,7 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         }
         if (e.getSource().equals(vymazFotkuButton)) {
             fotos.vymazFotku(idT, zoznamFotiek.get(idxFotkyNaMazanie).getId());
-            table.getModel().setValueAt(null, 0, idxFotkyNaMazanie);
+            table.getModel().setValueAt(poVymazaniIcon, 0, idxFotkyNaMazanie);
             table.repaint();
         }
         if (e.getSource().equals(vymazTuruButton)) {
@@ -371,17 +371,22 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         gbc.insets = new Insets(3, 3, 3, 3);
 
         BufferedImage logInObrazok1 = null;
+        BufferedImage imgPoVymazani = null;
 
         try {
             logInObrazok1 = ImageIO.read(new File("C:\\logo\\mm.png"));
+            imgPoVymazani = ImageIO.read(new File("C:\\naMenu\\mountain45.png"));
 
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
         Image scaledObrazok1 = logInObrazok1.getScaledInstance(600,
                 240, Image.SCALE_SMOOTH);
+        Image scaledObrazok2 = imgPoVymazani.getScaledInstance(100,
+                90, Image.SCALE_SMOOTH);
 
         fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
+        poVymazaniIcon = new ImageIcon(scaledObrazok2);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
