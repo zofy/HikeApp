@@ -37,7 +37,7 @@ import sk.ics.upjs.hikeapp.MysqlTuraDaO;
 import sk.ics.upjs.hikeapp.Tura;
 
 public class TuraForm extends javax.swing.JFrame {
-
+    
     private TuraDaO tury;
     private FotkaDaO fotos;
     private JLabel fotkaLabel;
@@ -51,11 +51,11 @@ public class TuraForm extends javax.swing.JFrame {
     private StarRater sr;
     private Tura tura;
     private List<Double> okraje;
-
+    
     public TuraForm() {
         initComponents();
     }
-
+    
     public TuraForm(long idT, long userId) {
         initComponents();
         tury = DaOFactory.INSTANCE.getTuraDaO();
@@ -63,7 +63,7 @@ public class TuraForm extends javax.swing.JFrame {
         idU = userId;
         tura = tury.dajTuru(idT);
         okraje = new LinkedList<Double>();
-
+        
         this.setTitle(tura.getNazov());
         fotkaLabel = new JLabel();
         zoznamPano = spracujPano(fotos.dajFotkyDanejTury(idT));
@@ -74,16 +74,16 @@ public class TuraForm extends javax.swing.JFrame {
         sr = new StarRater(5, 0, 0);
         sr.setRating(tura.getHodnotenie());
         BufferedImage logInObrazok1 = null;
-
+        
         try {
             logInObrazok1 = ImageIO.read(new File("C:\\logo\\mm.png"));
-
+            
         } catch (IOException ex) {
             System.err.println("Neni obrazok!");
         }
         Image scaledObrazok1 = logInObrazok1.getScaledInstance(600,
                 240, Image.SCALE_SMOOTH);
-
+        
         fotkaLabel.setIcon(new ImageIcon(scaledObrazok1));
         zoznam = this.spracujFotky(fotos.dajFotkyDanejTury(idT));
         //
@@ -98,14 +98,14 @@ public class TuraForm extends javax.swing.JFrame {
         s = new ScrollPaneSSCCE((ArrayList<ImageIcon>) zoznam);
         fotkyTable = s.getTable();
         fotkyTable.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 TuraForm.this.zmenFotku(fotkyTable.getSelectedColumn());
             }
-
+            
         });
-
+        
         Dimension d = new Dimension(600, 130);
         s.setPreferredSize(d);
         s.setMaximumSize(d);
@@ -187,7 +187,7 @@ public class TuraForm extends javax.swing.JFrame {
         popisLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(popisLabel, gbc);
         gbc.ipady = 0;
-
+        
         gbc.gridx = 1;
         gbc.gridy = 7;
         gbc.gridwidth = 1;
@@ -197,7 +197,7 @@ public class TuraForm extends javax.swing.JFrame {
         popisTury.setMinimumSize(d);
         popisTury.setPreferredSize(d);
         panel.add(popisTury, gbc);
-
+        
         gbc.gridx = 2;
         gbc.gridy = 7;
         JLabel medzera = new JLabel();
@@ -206,13 +206,13 @@ public class TuraForm extends javax.swing.JFrame {
         medzera.setPreferredSize(d);
         //medzera.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(medzera, gbc);
-
+        
         gbc.gridy = 7;
         gbc.gridx = 3;
         JLabel hodnotenieLabel = new JLabel("Hodnotenie:");
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(hodnotenieLabel, gbc);
-
+        
         gbc.gridy = 7;
         gbc.gridx = 3;
         gbc.anchor = GridBagConstraints.EAST;
@@ -226,19 +226,22 @@ public class TuraForm extends javax.swing.JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         d = new Dimension(600, 300);
         JTextArea detail = new JTextArea(tury.dajDetail(idT));
-        detail.setMinimumSize(d);
-        detail.setPreferredSize(d);
-        detail.setMaximumSize(d);
-        panel.add(detail, gbc);
-
+        detail.setEditable(false);
+        JScrollPane scrollPopis = new JScrollPane(detail);
+        scrollPopis.setPreferredSize(d);
+        scrollPopis.setMaximumSize(d);
+        scrollPopis.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPopis.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        panel.add(scrollPopis, gbc);
+        
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.setContentPane(scrollPane);
-
+        
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-
+            
             @Override
             public void windowClosing(WindowEvent e) {
                 long pocetHodnoteni = tura.getPocetHodnoteni();
@@ -253,12 +256,12 @@ public class TuraForm extends javax.swing.JFrame {
                     new FilterTurForm(idU).setVisible(true);
                 }
             }
-
+            
         });
         d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((d.width - this.getSize().width) / 2, (d.height - this.getSize().height) / 2);
     }
-
+    
     public List<ImageIcon> spracujFotky(List<Image> zoznamFotiek) {
         List<ImageIcon> upraveneFotky = new ArrayList<ImageIcon>();
         for (Image img : zoznamFotiek) {
@@ -268,7 +271,7 @@ public class TuraForm extends javax.swing.JFrame {
         }
         return upraveneFotky;
     }
-
+    
     public List<ImageIcon> spracujPano(List<Image> zoznamFotiek) {
         ImageIcon bimg = null;
         int height = 0;
@@ -286,7 +289,7 @@ public class TuraForm extends javax.swing.JFrame {
         }
         return upraveneFotky;
     }
-
+    
     public LinkedList<String> spracujPopisDoListu(String popis) {
         LinkedList<String> p = new LinkedList<String>();
         StringBuilder ret = new StringBuilder();
@@ -301,7 +304,7 @@ public class TuraForm extends javax.swing.JFrame {
         p.add(ret.toString());
         return p;
     }
-
+    
     public void vypis(LinkedList<String> bodyTury) {
         StringBuilder ret = new StringBuilder();
         int dlzka = 0;
@@ -328,7 +331,7 @@ public class TuraForm extends javax.swing.JFrame {
         popisLabel.setMaximumSize(d);
         popisLabel.setText(ret.toString());
     }
-
+    
     public void zmenFotku(int idx) {
         Dimension d = new Dimension(zoznamPano.get(idx).getIconWidth(), zoznamPano.get(idx).getIconHeight());
         fotkaLabel.setMinimumSize(d);

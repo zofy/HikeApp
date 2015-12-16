@@ -620,9 +620,14 @@ public class UpravaForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 10;
         gbc.gridwidth = 6;
         d = new Dimension(600, 300);
-        popis.setPreferredSize(d);
+        //popis.setPreferredSize(d);
+        JScrollPane scrollPopis = new JScrollPane(popis);
+        scrollPopis.setPreferredSize(d);
+        scrollPopis.setMaximumSize(d);
+        scrollPopis.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPopis.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         popis.setText(turaNaUpravu.getDetail());
-        panel.add(popis, gbc);
+        panel.add(scrollPopis, gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 5;

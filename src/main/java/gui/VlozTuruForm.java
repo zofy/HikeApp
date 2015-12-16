@@ -552,8 +552,12 @@ public class VlozTuruForm extends javax.swing.JFrame implements ActionListener {
         gbc.gridy = 9;
         gbc.gridwidth = 6;
         d = new Dimension(550, 300);
-        popis.setPreferredSize(d);
-        panel.add(popis, gbc);
+        JScrollPane scrollPopis = new JScrollPane(popis);
+        scrollPopis.setPreferredSize(d);
+        scrollPopis.setMaximumSize(d);
+        scrollPopis.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPopis.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        panel.add(scrollPopis, gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 5;
